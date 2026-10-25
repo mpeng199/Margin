@@ -6,6 +6,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 const clock = (page: Page, iso: string) => page.request.post('/api/dev/clock', { data: { iso }, headers: { 'x-margin': '1' } });
+const serverNow = async (page: Page) => Date.parse((await (await page.request.get('/api/dev/clock')).json()).now);
 const cont = (page: Page) => page.getByRole('button', { name: /^(Continue|Finish)$/ }).click();
 
 test('onboarding → daily loop → evening → morning → weekly review → project tab', async ({ page }) => {
@@ -66,7 +67,7 @@ test('onboarding → daily loop → evening → morning → weekly review → pr
   await page.goto('/focus');
   await page.getByRole('button', { name: /Start/ }).first().click();
   await expect(page.getByText(/Ends at/)).toBeVisible();
-  await clock(page, '2026-10-26T16:33:00-04:00');
+  await clock(page, new Date((await serverNow(page)) + 51 * 60_000).toISOString());
   await page.reload();
   await expect(page.getByText('Break', { exact: true })).toBeVisible();
 
@@ -81,6 +82,7 @@ test('onboarding → daily loop → evening → morning → weekly review → pr
   for (let step = 0; step < 8; step++) {
     if (await page.getByRole('button', { name: 'Shutdown Complete' }).isVisible()) break;
     for (const b of await page.getByRole('button', { name: 'Covered' }).all()) await b.click();
+    for (const f of await page.getByLabel(/^Next action for /).all()) if (!(await f.inputValue())) await f.fill('Open the doc and write one sentence');
     const phone = page.getByRole('button', { name: 'Confirm Phone Is Going Out' });
     if (await phone.isVisible()) await phone.click();
     await page.getByRole('button', { name: 'Continue' }).click();
