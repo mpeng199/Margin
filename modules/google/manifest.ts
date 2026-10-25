@@ -346,6 +346,7 @@ export default defineModule({
      CREATE TABLE app_calendars (kind TEXT NOT NULL, ref TEXT NOT NULL, calendar_id TEXT NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY (kind, ref));`,
   ],
   service: createGoogleService,
+  widgets: [{ id: 'reconnect', slot: 'today.banner', order: -5 }],
   emits: ['google.synced', 'google.connected', 'google.connect_failed', 'google.reconnect_needed'],
   init(ctx) {
     const g = ctx.service<GoogleService>('google');
