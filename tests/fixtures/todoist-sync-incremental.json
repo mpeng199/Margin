@@ -1,0 +1,13 @@
+{
+  "_source": "Incremental /sync shape (documented fields). Deleted and completed items arrive as full objects with flags.",
+  "full_sync": false,
+  "sync_token": "VRyFHr0Qo3Hr--pzINyT6nax4vW7X2YG5RQlw3lB-6eYOPbSZVJepa62EVhO",
+  "temp_id_mapping": {},
+  "items": [
+    { "id": "6X7rfFVPjhvv84XG", "project_id": "6Jf8VQXxpwv56VQ7", "section_id": null, "parent_id": null, "content": "Call SHP office", "description": "", "priority": 1, "labels": [], "child_order": 2,
+      "due": { "date": "2026-10-27T16:00:00", "timezone": null, "string": "tomorrow at 4pm", "lang": "en", "is_recurring": false },
+      "deadline": null, "duration": null, "checked": true, "is_deleted": false, "completed_at": "2026-10-27T20:05:00Z" },
+    { "id": "6X7rfEVP8hvv25ZQ", "project_id": "6g5pPgp7qXrxFVrQ", "section_id": null, "parent_id": "6X7rM8997g3RQmvh", "content": "Buy fertilizer", "description": "", "priority": 2, "labels": [], "child_order": 1, "due": null, "deadline": null, "duration": null, "checked": false, "is_deleted": true }
+  ],
+  "projects": [], "sections": [], "labels": []
+}

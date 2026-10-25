@@ -1,0 +1,5 @@
+{
+  "_source": "Incremental events.list (syncToken): a deleted event comes back with status cancelled and only id guaranteed.",
+  "kind": "calendar#events", "nextSyncToken": "CMCbq8e_x70CEMCbq8e_x70CGAU=",
+  "items": [ { "kind": "calendar#event", "id": "3p8h7gq2nka7aaitjlh8dcqgob", "status": "cancelled" } ]
+}

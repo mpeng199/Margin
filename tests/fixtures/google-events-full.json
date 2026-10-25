@@ -1,0 +1,20 @@
+{
+  "_source": "events.list with singleEvents=true (documented event resource fields): a recurring instance across the DST change, an all-day event with exclusive end, a free (transparent) event, and an event Margin created.",
+  "kind": "calendar#events", "summary": "michaelpeng199@gmail.com", "timeZone": "America/New_York", "accessRole": "owner",
+  "nextSyncToken": "CKCbq8e_x70CEKCbq8e_x70CGAU=",
+  "items": [
+    { "kind": "calendar#event", "id": "tlc942uc1k3k4p9rspgfi5hlqc_20261027T100000Z", "status": "confirmed", "summary": "Badminton",
+      "start": { "dateTime": "2026-10-27T06:00:00-04:00", "timeZone": "America/New_York" }, "end": { "dateTime": "2026-10-27T08:00:00-04:00", "timeZone": "America/New_York" },
+      "recurringEventId": "tlc942uc1k3k4p9rspgfi5hlqc", "originalStartTime": { "dateTime": "2026-10-27T06:00:00-04:00", "timeZone": "America/New_York" }, "eventType": "default" },
+    { "kind": "calendar#event", "id": "tlc942uc1k3k4p9rspgfi5hlqc_20261103T110000Z", "status": "confirmed", "summary": "Badminton",
+      "start": { "dateTime": "2026-11-03T06:00:00-05:00", "timeZone": "America/New_York" }, "end": { "dateTime": "2026-11-03T08:00:00-05:00", "timeZone": "America/New_York" },
+      "recurringEventId": "tlc942uc1k3k4p9rspgfi5hlqc", "eventType": "default" },
+    { "kind": "calendar#event", "id": "3p8h7gq2nka7aaitjlh8dcqgob", "status": "confirmed", "summary": "BASKETBALL TRYOUTS",
+      "start": { "date": "2026-10-28" }, "end": { "date": "2026-10-29" }, "transparency": "transparent", "eventType": "default" },
+    { "kind": "calendar#event", "id": "14l3s3mujslvd8cj6hvgkg4j1g", "status": "confirmed", "summary": "Study hall (optional)", "transparency": "transparent",
+      "start": { "dateTime": "2026-10-29T15:00:00-04:00" }, "end": { "dateTime": "2026-10-29T15:40:00-04:00" }, "eventType": "default" },
+    { "kind": "calendar#event", "id": "marginblock0001", "status": "confirmed", "summary": "Deep work · Delphic",
+      "start": { "dateTime": "2026-10-27T19:00:00-04:00", "timeZone": "America/New_York" }, "end": { "dateTime": "2026-10-27T20:15:00-04:00", "timeZone": "America/New_York" },
+      "extendedProperties": { "private": { "margin": "1", "marginKind": "block", "marginRef": "6X7rM8997g3RQmvh" } }, "eventType": "default" }
+  ]
+}

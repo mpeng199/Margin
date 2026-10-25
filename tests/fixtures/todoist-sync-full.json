@@ -1,0 +1,31 @@
+{
+  "_source": "Shapes transcribed from developer.todoist.com/api/v1 (Sync: Overview, Tasks, Due dates, User). Re-record against a real account by saving POST /api/v1/sync responses.",
+  "full_sync": true,
+  "full_sync_date_utc": "2026-10-26T19:00:00Z",
+  "sync_token": "TnYUZEpuzf2FMA9qzyY3j4xky6dXiYejmSO85S5paZ_a9y1FI85mBbIWZGpW",
+  "temp_id_mapping": {},
+  "projects": [
+    { "id": "6Jf8VQXxpwv56VQ7", "name": "Inbox", "inbox_project": true, "is_archived": false, "is_deleted": false, "parent_id": null, "child_order": 0, "view_style": "list", "color": "charcoal" },
+    { "id": "6g5pPgp7qXrxFVrQ", "name": "One-off tasks", "is_archived": false, "is_deleted": false, "parent_id": null, "child_order": 1, "view_style": "list", "color": "blue" }
+  ],
+  "sections": [
+    { "id": "6X7FxXvX84jHphx2", "project_id": "6g5pPgp7qXrxFVrQ", "name": "This week", "section_order": 1, "is_archived": false, "is_deleted": false, "is_collapsed": false }
+  ],
+  "items": [
+    { "id": "6X7rM8997g3RQmvh", "project_id": "6g5pPgp7qXrxFVrQ", "section_id": "6X7FxXvX84jHphx2", "parent_id": null, "content": "Water plants", "description": "", "priority": 4, "labels": ["home"], "child_order": 1,
+      "due": { "date": "2026-10-27T13:00:00Z", "timezone": "America/New_York", "string": "every day at 9am", "lang": "en", "is_recurring": true },
+      "deadline": null, "duration": { "amount": 15, "unit": "minute" }, "checked": false, "is_deleted": false, "added_at": "2025-01-21T21:28:43.841504Z", "updated_at": "2026-10-24T08:00:00Z", "completed_at": null },
+    { "id": "6X7rfFVPjhvv84XG", "project_id": "6Jf8VQXxpwv56VQ7", "section_id": null, "parent_id": null, "content": "Call SHP office", "description": "", "priority": 1, "labels": [], "child_order": 2,
+      "due": { "date": "2026-10-27T16:00:00", "timezone": null, "string": "tomorrow at 4pm", "lang": "en", "is_recurring": false },
+      "deadline": null, "duration": null, "checked": false, "is_deleted": false, "added_at": "2026-10-26T18:00:00Z", "updated_at": "2026-10-26T18:00:00Z", "completed_at": null },
+    { "id": "6X7rfEVP8hvv25ZQ", "project_id": "6g5pPgp7qXrxFVrQ", "section_id": null, "parent_id": "6X7rM8997g3RQmvh", "content": "Buy fertilizer", "description": "for the ferns", "priority": 2, "labels": ["errand"], "child_order": 1,
+      "due": { "date": "2026-11-01", "timezone": null, "string": "Nov 1", "lang": "en", "is_recurring": false },
+      "deadline": { "date": "2026-11-03", "lang": "en" }, "duration": null, "checked": false, "is_deleted": false, "added_at": "2026-10-20T12:00:00Z", "updated_at": "2026-10-20T12:00:00Z", "completed_at": null }
+  ],
+  "labels": [
+    { "id": "2156154810", "name": "home", "color": "lime_green", "is_deleted": false, "is_favorite": false },
+    { "id": "2156154811", "name": "errand", "color": "charcoal", "is_deleted": false, "is_favorite": false }
+  ],
+  "user": { "id": "2671355", "full_name": "Michael", "inbox_project_id": "6Jf8VQXxpwv56VQ7", "is_premium": false, "tz_info": { "timezone": "America/New_York", "gmt_string": "-04:00" } },
+  "user_plan_limits": { "current": { "plan_name": "free", "max_projects": 5, "max_sections": 20, "max_tasks": 300, "durations": false, "reminders": false, "comments": true } }
+}
