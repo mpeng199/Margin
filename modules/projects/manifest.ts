@@ -68,6 +68,8 @@ export default defineModule({
      CREATE INDEX project_status_log_project ON project_status_log(project_id, at);`,
   ],
   service: createProjectsService,
+  // One entry only: the sidebar component lists the individual projects under it.
+  nav: [{ id: 'projects', label: 'Projects', icon: 'FolderKanban', path: '/projects', section: 'main', order: 20, work: true }],
   emits: ['project.created', 'project.status_changed', 'project.updated', 'project.reordered', 'project.timeline_changed', 'project.notes_changed'],
   on: {
     // Sets applied from the review screen (not just from a project tab) still link a new Todoist project and pair calendar events.

@@ -240,6 +240,7 @@ export default defineModule({
      CREATE TABLE deleg_scripts (id TEXT PRIMARY KEY, title TEXT NOT NULL, body TEXT NOT NULL, ord INTEGER NOT NULL DEFAULT 0, builtin INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL);`,
   ],
   service: createDelegationService,
+  nav: [{ id: 'scripts', label: 'Say-No Scripts', icon: 'MessageSquareText', path: '/scripts', section: 'secondary', order: 30 }],
   emits: ['delegation.function_changed', 'delegation.waiting_changed', 'delegation.checkin_logged', 'delegation.scripts_changed'],
   init(ctx) {
     // Seed the script library once; a script you delete stays deleted.
