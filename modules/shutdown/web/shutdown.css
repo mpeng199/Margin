@@ -1,0 +1,30 @@
+/* shutdown — prefix sd- */
+.sd-flow { padding: var(--s6) 0 var(--s10); }
+.sd-eyebrow { display: flex; align-items: center; gap: var(--s3); font-size: var(--t-callout); color: var(--ink-2); }
+.sd-dots { display: flex; gap: 5px; }
+.sd-dots i { width: 26px; height: 3px; border-radius: 2px; background: var(--line-strong); }
+.sd-dots i[data-done='true'] { background: var(--accent); }
+.sd-dots i[data-cur='true'] { background: var(--accent); height: 5px; margin-top: -1px; }
+.sd-title { font: 600 30px / 1.2 var(--font-display); letter-spacing: -0.02em; margin: var(--s5) 0 var(--s2); }
+.sd-lede { font-size: var(--t-title2); line-height: 1.5; color: var(--ink-2); max-width: 58ch; }
+.sd-why { margin-top: var(--s3); }
+.sd-body { margin-top: var(--s8); display: flex; flex-direction: column; gap: var(--s6); }
+.sd-body .section { margin-top: 0; }
+.sd-dump.textarea { font-size: var(--t-title2); line-height: 1.65; min-height: 300px; padding: var(--s4); border-radius: var(--r-group); }
+.sd-card { display: flex; flex-direction: column; gap: var(--s3); }
+.sd-card + .sd-card { margin-top: var(--s3); }
+.sd-card-title { font-size: var(--t-title3); font-weight: 600; line-height: 1.35; }
+.sd-controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
+.sd-controls .input { width: auto; }
+.sd-controls .input.wide { flex: 1; min-width: 220px; }
+.sd-sub { color: var(--ink-2); font-size: var(--t-callout); }
+.sd-stat { font: 300 44px / 1.1 var(--font-display); letter-spacing: -0.02em; }
+.sd-stat small { font: 400 var(--t-title3) / 1.3 var(--font); letter-spacing: 0; color: var(--ink-2); margin-left: var(--s2); }
+.sd-tl-time { width: 120px; flex: none; color: var(--ink-2); font-size: var(--t-callout); }
+.sd-phone { align-self: flex-start; }
+.sd-foot { position: sticky; bottom: 0; display: flex; align-items: center; gap: var(--s3); margin-top: var(--s8); padding: var(--s4) 0; background: linear-gradient(to bottom, transparent, var(--bg-content) 35%); }
+.sd-foot .msg { flex: 1; min-width: 0; font-size: var(--t-callout); color: var(--amber); }
+.sd-count { font: 300 72px / 1 var(--font-display); letter-spacing: -0.03em; color: var(--ink); }
+.sd-count-label { font-size: var(--t-title3); color: var(--ink-2); margin-top: var(--s2); }
+.sd-quiet { margin-top: var(--s4); font-size: var(--t-body); color: var(--ink-3); }
+.sd-prompt { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); }

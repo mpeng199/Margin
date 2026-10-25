@@ -5,6 +5,7 @@ import { Page } from '@web/app/Page';
 import { useApi } from '@web/lib/query';
 import { queryClient } from '@web/lib/query';
 import { useDay } from '@web/lib/hooks';
+import { serverNow } from '@web/lib/hooks';
 import { api } from '@web/lib/api';
 import { Section, Group, Item, Button, Check, Tag, Sheet, Input, Select, TextArea, Banner, CapacityBar, Empty, Icon, toast } from '@web/ui';
 import { fmtDur, fmtDayLong, fmtTime, fmtTimeShort, relDay, dt } from '@web/lib/format';
@@ -469,7 +470,7 @@ function DeepBlockWidget() {
 
 function DeepBlockSheet({ d, onClose }: { d: DeepInfo; onClose: () => void }) {
   const firstStart = (g: DeepInfo['gaps'][number]) => {
-    const t = d.date === dt(new Date().toISOString()).toISODate() ? Math.max(dt(g.start).toMillis(), roundUp5(Date.now())) : dt(g.start).toMillis();
+    const t = d.date === dt(new Date(serverNow()).toISOString()).toISODate() ? Math.max(dt(g.start).toMillis(), roundUp5(serverNow())) : dt(g.start).toMillis();
     return dt(new Date(t).toISOString()).toFormat('HH:mm');
   };
   const usable = d.gaps.filter((g) => g.minutes >= 60);

@@ -15,16 +15,23 @@ export function useEnabled(id: string) {
   const { data } = useModules();
   return !!data?.find((m) => m.id === id && m.enabled);
 }
-export const useDay = () => useApi<DayState>('/api/day/state', { refetchInterval: 30_000 });
+/** Server clock minus client clock (the daemon is the time authority; dev can pin it). */
+let serverOffset = 0;
+export const serverNow = () => Date.now() + serverOffset;
+export function useDay() {
+  const q = useApi<DayState>('/api/day/state', { refetchInterval: 30_000 });
+  if (q.data) serverOffset = Date.parse(q.data.now) - q.dataUpdatedAt;
+  return q;
+}
 export function useSettings<T = any>(module: string) {
   return useApi<T>(`/api/settings/${module}`);
 }
 
 /** Re-render every `ms` (for countdowns). */
 export function useNow(ms = 15_000) {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => { const t = setInterval(() => setNow(Date.now()), ms); return () => clearInterval(t); }, [ms]);
-  return now;
+  const [, tick] = useState(0);
+  useEffect(() => { const t = setInterval(() => tick((x) => x + 1), ms); return () => clearInterval(t); }, [ms]);
+  return serverNow();
 }
 
 export function useHotkey(combo: string, fn: (e: KeyboardEvent) => void, deps: unknown[] = []) {

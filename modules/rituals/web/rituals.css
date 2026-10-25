@@ -1,0 +1,8 @@
+/* rituals — prefix rt- */
+.rt-intro { margin-bottom: var(--s2); }
+.rt-n { width: 18px; text-align: right; color: var(--ink-3); font-size: var(--t-callout); flex: none; }
+.rt-label.input { background: transparent; box-shadow: none; padding-left: 0; font-size: var(--t-body); width: 100%; }
+.rt-label.input:hover { background: var(--bg-hover); padding-left: 6px; }
+.rt-label.input:focus { background: var(--bg-control); padding-left: 6px; }
+.rt-add { display: flex; gap: var(--s2); margin-top: var(--s3); }
+.rt-btns { display: flex; gap: 2px; flex: none; }

@@ -172,7 +172,8 @@ input[type='checkbox'] { accent-color: var(--accent); }
 /* ------------------------------------------------------------------ Grouped lists (System Settings vernacular) */
 .section { margin-top: var(--s6); }
 .section > header { display: flex; align-items: baseline; gap: var(--s2); padding: 0 var(--s1) var(--s2); }
-.section > header h2 { font: 600 var(--t-title3) / 1.2 var(--font-display); letter-spacing: -0.012em; }
+.section > header h2 { font: 600 var(--t-title3) / 1.2 var(--font-display); letter-spacing: -0.012em; white-space: nowrap; flex: none; }
+.section > header .why { min-width: 0; flex: 0 1 auto; }
 .section > header .why { font-size: var(--t-callout); color: var(--ink-3); }
 .section > header .end { margin-left: auto; display: flex; gap: var(--s2); align-items: center; }
 .section > footer { padding: var(--s2) var(--s1) 0; font-size: var(--t-callout); color: var(--ink-2); }

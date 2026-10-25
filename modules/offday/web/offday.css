@@ -1,0 +1,9 @@
+/* offday — prefix od- */
+.od-suggest .title { color: var(--ink-3); }
+.od-suggest .btn { opacity: 0.85; }
+.od-add { display: flex; gap: var(--s2); margin-top: var(--s3); }
+.od-note { margin-top: var(--s3); }
+.od-locked { font-weight: 600; margin-bottom: var(--s2); }
+.od-moves { display: flex; gap: var(--s2); flex-wrap: wrap; margin-top: var(--s3); }
+.od-why { margin-top: var(--s8); text-align: center; }
+.od-refusal { font-size: var(--t-title3); line-height: 1.45; color: var(--ink); }

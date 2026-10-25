@@ -1,0 +1,12 @@
+.training-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: var(--s1); text-align: center; }
+.training-day { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: var(--t-callout); color: var(--ink-2); padding: var(--s2) 0; border-radius: var(--r-control); }
+.training-day[data-today='true'] { background: var(--bg-inset); color: var(--ink); }
+.training-dot { width: 10px; height: 10px; border-radius: 50%; box-sizing: border-box; }
+.training-dot[data-s='trained'] { background: var(--accent); }
+.training-dot[data-s='rest'] { box-shadow: inset 0 0 0 1.5px var(--ink-3); }
+.training-dot[data-s='open'] { background: var(--line-strong); transform: scale(0.5); }
+.training-lift { display: grid; grid-template-columns: 1fr 84px 64px auto; gap: var(--s2); align-items: center; }
+.training-rpe.seg button { padding: 0; width: 24px; }
+.training-row { display: flex; align-items: flex-start; gap: var(--s4); }
+.training-rhr { display: flex; align-items: center; gap: var(--s2); }
+.training-rhr .input { width: 80px; text-align: right; }

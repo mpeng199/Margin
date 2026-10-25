@@ -1,0 +1,20 @@
+.habits-dots { display: flex; gap: 4px; margin-top: 6px; }
+.habits-dot { width: 8px; height: 8px; border-radius: 50%; box-sizing: border-box; flex: none; }
+.habits-dot[data-s='done'] { background: var(--accent); }
+.habits-dot[data-s='miss'] { box-shadow: inset 0 0 0 1.5px var(--ink-3); }
+.habits-dot[data-s='rest'] { background: var(--line-strong); transform: scale(0.5); }
+.habits-dot[data-s='pending'] { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.habits-dot[data-s='before'] { visibility: hidden; }
+.habits-stats { display: flex; gap: var(--s4); color: var(--ink-2); font-size: var(--t-callout); white-space: nowrap; }
+.habits-stats b { color: var(--ink); font-weight: 600; }
+.habits-stepper { display: inline-flex; align-items: center; gap: var(--s2); }
+.habits-stepper .num { min-width: 52px; text-align: center; font-size: var(--t-body); }
+.habits-minutes { display: inline-flex; align-items: center; gap: var(--s2); color: var(--ink-2); font-size: var(--t-callout); }
+.habits-minutes .input { width: 68px; text-align: right; }
+.habits-scale.seg button { padding: 0; width: 22px; }
+.habits-note { color: var(--ink-2); font-size: var(--t-callout); margin-top: 3px; }
+.habits-cue { display: grid; grid-template-columns: auto 1fr; gap: var(--s2) var(--s2); align-items: center; }
+.habits-cue > span { color: var(--ink-2); font-size: var(--t-callout); }
+.habits-days { display: flex; gap: 4px; flex-wrap: wrap; }
+.habits-days button { min-width: 38px; }
+.habits-actions { display: flex; gap: var(--s1); }
