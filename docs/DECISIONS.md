@@ -153,3 +153,6 @@ tooling; feature modules were built by parallel agents against written service/e
   paused side projects don't add a dozen calendars to the phone.
 - **Countdowns use the daemon's clock** (the UI measures its offset from `/api/day/state`), which keeps
   them right if the browser clock drifts and makes dev time-travel possible (`POST /api/dev/clock`).
+- **Habit formation limit vs the Phase 1 set.** SPEC 8 caps formation at 2 but prescribes three Phase 1
+  habits (fixed wake time, shutdown complete, phone out of the bedroom). The prescribed set is the one
+  allowed exception; nothing new unlocks until those three hold 80%+ for two weeks.

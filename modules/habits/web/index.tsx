@@ -211,9 +211,9 @@ function HabitsPage() {
   const library = o.library.filter((l) => !l.added);
   return (
     <Page title="Habits" width="narrow" actions={<Button variant="primary" icon="Plus" disabled={!slots.canAdd} title={slots.reason} onClick={() => setSheet({ editing: null })}>New Habit</Button>}>
-      {!slots.canAdd && slots.reason && <Banner tone="amber" icon="Info">{slots.reason}</Banner>}
+      {!slots.canAdd && slots.reason && <Banner tone="dusk" icon="Info">{slots.used > slots.max ? `The Phase 1 set is three habits, one more than the usual limit of ${slots.max}. New habits unlock when these hold 80% or better for two weeks.` : slots.reason}</Banner>}
       <Section title="In formation" why="Two at a time, so effort isn’t spread thin; consistency over streaks (Lally 2010)."
-        end={<span className="small muted num">{slots.used} of {slots.max} in formation</span>}>
+        end={<span className="small muted num">{slots.used > slots.max ? `${slots.used} in formation (Phase 1 set)` : `${slots.used} of ${slots.max} in formation`}</span>}>
         <Group>
           {o.formation.length ? o.formation.map((h) => <ActiveRow key={h.id} h={h} date={o.date} onEdit={() => setSheet({ editing: h })} />) : (
             <Empty action={<Button onClick={() => phaseOne.mutate({} as any)}>Start With the Phase 1 Three</Button>}>
