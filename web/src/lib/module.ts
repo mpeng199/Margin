@@ -20,6 +20,8 @@ export interface WebModule {
   commands?: WebCommand[];
   /** Replaces the auto-generated settings form for this module. */
   settingsPanel?: ComponentType<any>;
+  /** Settings keys the custom panel edits, hidden from the generated form. */
+  settingsHide?: string[];
   /** Extra sidebar section (e.g. project tabs). */
   sidebar?: ComponentType<{ locked: boolean }>;
 }

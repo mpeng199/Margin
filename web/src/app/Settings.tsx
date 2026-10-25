@@ -68,7 +68,8 @@ function AutoForm({ m }: { m: ModuleInfo }) {
   const [draft, setDraft] = useState<Record<string, any> | null>(null);
   useEffect(() => { if (values.data) setDraft(values.data); }, [values.data]);
   if (!draft) return null;
-  const props: Record<string, any> = m.settingsSchema?.properties ?? {};
+  const hidden = new Set(webModule(m.id)?.settingsHide ?? []);
+  const props: Record<string, any> = Object.fromEntries(Object.entries(m.settingsSchema?.properties ?? {}).filter(([k]) => !hidden.has(k)));
   const dirty = JSON.stringify(draft) !== JSON.stringify(values.data);
   const save = async () => {
     try {
@@ -125,6 +126,21 @@ function FieldFor({ schema, value, onChange, label }: { schema: any; value: any;
           <button key={i} type="button" aria-pressed={set.has(i + 1)} aria-label={['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][i]}
             onClick={() => { const n = new Set(set); n.has(i + 1) ? n.delete(i + 1) : n.add(i + 1); onChange([...n].sort()); }}>{d}</button>
         ))}
+      </div>
+    );
+  }
+  if (types.includes('array') && schema.minItems === 7 && schema.maxItems === 7 && (schema.items?.anyOf ?? []).some((x: any) => x.type === 'string' && String(x.pattern ?? '').includes(':'))) {
+    const v: (string | null)[] = value ?? [null, null, null, null, null, null, null];
+    return (
+      <div className="weekday-times" role="group" aria-label={label}>
+        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => (
+          <label key={d} className="row small">
+            <span style={{ width: 30 }} className="muted">{d}</span>
+            <Input type="time" value={v[i] ?? ''} aria-label={`${d} wake time`} onChange={(e) => onChange(v.map((x, j) => (j === i ? e.target.value || null : x)))} />
+            {v[i] && <button type="button" className="btn plain small" onClick={() => onChange(v.map((x, j) => (j === i ? null : x)))}>Clear</button>}
+          </label>
+        ))}
+        <span className="tiny faint">Blank means your usual wake time.</span>
       </div>
     );
   }

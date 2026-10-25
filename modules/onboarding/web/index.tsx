@@ -8,6 +8,7 @@ import { Section, Group, Item, Button, Input, Select, Toggle, Tag, Banner, toast
 import { fmtDur, fmtDay, todayISO } from '@web/lib/format';
 import { TodoistAccount } from '../../todoist/web';
 import { GoogleAccount } from '../../google/web';
+import { FixedBlocksEditor } from '../../day/web/BlocksEditor';
 import './onboarding.css';
 
 const TITLES = ['Connect your accounts', 'When do you wake up?', 'Your fixed weekly blocks', 'Off-day and weekly review', 'Projects become tabs', 'Delphic Medicine owners', 'Application deadlines', 'A baseline to measure against'];
@@ -118,7 +119,6 @@ function Blocks({ hasGoogle }: { hasGoogle: boolean }) {
   const [calMsg, setCalMsg] = useState<string | null>(null);
   useEffect(() => { if (seed.data && !blocks) setBlocks(seed.data); }, [seed.data, blocks]);
   if (!blocks) return null;
-  const upd = (i: number, patch: Partial<Block>) => { setSaved(false); setBlocks(blocks.map((b, j) => (j === i ? { ...b, ...patch } : b))); };
   const save = async () => {
     await api.patch('/api/settings/day', { fixedBlocks: blocks });
     setSaved(true);
@@ -131,26 +131,8 @@ function Blocks({ hasGoogle }: { hasGoogle: boolean }) {
   return (
     <>
       <p className="ob-lede">Seeded from your current schedule. Edit anything that’s off, then check what’s left before the stop.</p>
-      <Group>
-        {blocks.map((b, i) => (
-          <Item key={b.id} className="ob-block">
-            <Input value={b.label} onChange={(e) => upd(i, { label: e.target.value })} aria-label="Block name" style={{ width: 96 }} />
-            <div className="days-picker" role="group" aria-label={`${b.label} days`}>
-              {'MTWTFSS'.split('').map((d, k) => (
-                <button key={k} type="button" aria-pressed={b.days.includes(k + 1)} aria-label={DAYS[k]}
-                  onClick={() => upd(i, { days: b.days.includes(k + 1) ? b.days.filter((x) => x !== k + 1) : [...b.days, k + 1].sort() })}>{d}</button>
-              ))}
-            </div>
-            <Input type="time" value={b.start} onChange={(e) => upd(i, { start: e.target.value })} aria-label="Start" />
-            <span className="faint">–</span>
-            <Input type="time" value={b.end} onChange={(e) => upd(i, { end: e.target.value })} aria-label="End" />
-            <button className="btn icon" aria-label={`Remove ${b.label}`} onClick={() => { setSaved(false); setBlocks(blocks.filter((_, j) => j !== i)); }}><Icon name="X" size={14} /></button>
-          </Item>
-        ))}
-      </Group>
-      <div className="row" style={{ marginTop: 10 }}>
-        <Button onClick={() => { setSaved(false); setBlocks([...blocks, { id: crypto.randomUUID(), label: 'Block', kind: 'other', days: [1, 2, 3, 4, 5], start: '16:00', end: '17:00' }]); }} icon="Plus">Add Block</Button>
-        <span className="grow" />
+      <FixedBlocksEditor blocks={blocks} onChange={(b) => { setSaved(false); setBlocks(b); }} />
+      <div className="row" style={{ marginTop: 10, justifyContent: 'flex-end' }}>
         <Button variant="primary" onClick={save}>{saved ? 'Saved' : 'Save and Check Capacity'}</Button>
       </div>
       {saved && week.data && (

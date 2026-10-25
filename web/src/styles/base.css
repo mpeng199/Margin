@@ -48,7 +48,7 @@ button { font: inherit; color: inherit; }
 }
 
 /* ------------------------------------------------------------------ App frame */
-.app { display: grid; grid-template-columns: var(--sidebar-w, 216px) minmax(0, 1fr); overflow: hidden; height: 100%; transition: grid-template-columns 0.2s var(--ease); }
+.app { display: grid; grid-template-columns: var(--sidebar-w, 216px) minmax(0, 1fr); overflow: hidden; height: 100%; }
 .app.no-sidebar { grid-template-columns: 0 minmax(0, 1fr); }
 .sidebar {
   background: var(--bg-sidebar);
@@ -291,3 +291,7 @@ input[type='checkbox'] { accent-color: var(--accent); }
 .capture-panel input { font-size: 20px; font-weight: 400; color: var(--ink); -webkit-app-region: no-drag; }
 .capture-hint { grid-column: 2; font-size: var(--t-sub); color: var(--ink-3); }
 html:not(.electron) .capture-panel { background: var(--bg-group); }
+
+.weekday-times { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+.day-block { flex-wrap: nowrap; gap: 8px; }
+.day-block .input[type='time'] { width: 124px; }

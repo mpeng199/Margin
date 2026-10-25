@@ -6,6 +6,7 @@ import { Section, Group, Item, Button, Sheet, Input, Tag, CapacityBar, Icon, Ban
 import { dt, fmtTime, fmtDur, fmtCountdown, fmtTimeShort } from '@web/lib/format';
 import type { Capacity } from '../capacity';
 import type { TimelineItem } from '../manifest';
+import { DaySettingsPanel } from './BlocksEditor';
 
 /** The signature: the day as a horizon. Daylight until the stop, dusk until lights-out. */
 function Horizon() {
@@ -159,6 +160,8 @@ function NoCapacityBanner() {
 export default defineWebModule({
   id: 'day',
   widgets: { horizon: Horizon, capacity: CapacityWidget, timeline: TimelineWidget, 'no-capacity': NoCapacityBanner },
+  settingsPanel: DaySettingsPanel,
+  settingsHide: ['fixedBlocks'],
   commands: [
     { id: 'late-night', label: 'Declare a late night', group: 'Day', run: () => '/today' },
   ],
