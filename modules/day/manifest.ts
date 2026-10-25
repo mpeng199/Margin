@@ -241,6 +241,11 @@ export function createDayService(ctx: Ctx) {
         .map((i) => ({ start: fromISO(i.start), end: fromISO(i.end), label: i.title, source: i.source }));
       const plan = ctx.maybe<{ loadFor(d: ISODate): LoadItem[] }>('plan');
       const items = plan ? plan.loadFor(date) : [];
+      if (svc.isOffDay(date)) {
+        // Off-day: no work capacity by design; anything planned shows as over.
+        const cap = computeCapacity({ date, wake: a.wake, stop: a.wake, busy: [], items, nearZeroMin: 0 });
+        return { ...cap, offDay: true, status: items.length ? 'over' : 'open' };
+      }
       return computeCapacity({ date, wake: a.wake, stop: a.hardStop, busy, items, nearZeroMin: st.nearZeroMin });
     },
 
@@ -254,7 +259,7 @@ export function createDayService(ctx: Ctx) {
         freeMin: days.reduce((x, d) => x + d.freeMin, 0),
         loadMin: days.reduce((x, d) => x + d.loadMin, 0),
         weekdayFreeMin: weekdays.reduce((x, d) => x + d.freeMin, 0),
-        weekdaysWithoutCapacity: weekdays.filter((d) => d.status === 'none').map((d) => d.date),
+        weekdaysWithoutCapacity: weekdays.filter((d) => d.status === 'none' && !d.offDay).map((d) => d.date),
       };
     },
   };

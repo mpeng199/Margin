@@ -30,6 +30,8 @@ export interface Capacity {
   busy: { start: string; end: string; label: string; source: string }[];
   gaps: { start: string; end: string; minutes: number }[];
   items: LoadItem[];
+  /** The weekly off-day: no work capacity by design. */
+  offDay?: boolean;
 }
 
 export function fixedIntervals(blocks: FixedBlock[], date: ISODate): (Interval & { id: string; kind: FixedBlock['kind']; label: string; source: string })[] {

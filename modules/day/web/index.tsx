@@ -82,6 +82,13 @@ function CapacityWidget() {
   const cap = useApi<Capacity>(day.data ? `/api/day/capacity?date=${day.data.date}` : null);
   const c = cap.data;
   if (!c) return null;
+  if (c.offDay) {
+    return (
+      <Section title="Capacity">
+        <Group pad><p className="small muted">{c.items.length ? `Today is your day off, and ${c.items.length} task${c.items.length === 1 ? ' is' : 's are'} still planned for it. Move them to keep the day clear.` : 'Today is your day off. Nothing is planned, which is the point.'}</p></Group>
+      </Section>
+    );
+  }
   const msg = {
     none: `There’s no free time today between fixed blocks and your stop. Which commitment changes?`,
     over: `Planned work is ${fmtDur(c.overByMin)} more than the time you have. Triage before you accept the plan.`,

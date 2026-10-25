@@ -127,6 +127,7 @@ function useOnboarded(): boolean | undefined {
 function EveningView() {
   const day = useDay();
   const brk = useAction('post', '/api/day/break-stop');
+  const settings = useApi<{ breakStopUnlockMin: number }>('/api/settings/day');
   const [, navigate] = useLocation();
   const done = !!day.data?.shutdownAt;
   return (
@@ -140,7 +141,7 @@ function EveningView() {
             <button className="btn plain small" onClick={() => brk.mutate({ view: 'evening' } as any)}>
               I’m breaking my stop
             </button>
-            <p className="faint tiny">Opens work views for {45} minutes and logs it. No judgment, just data.</p>
+            <p className="faint tiny">Opens work views for {settings.data?.breakStopUnlockMin ?? 45} minutes and logs it. No judgment, just data.</p>
           </div>
         </div>
       </div>
