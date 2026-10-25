@@ -80,6 +80,10 @@ function openCapture() {
 
 /** Notifications arrive from the daemon over SSE; Notification Center shows them as Margin. */
 function listen() {
+  // Reconnect exactly once per connection however it ends (clean end, abrupt close when the daemon
+  // restarts, or a refused connection while it's starting).
+  let retried = false;
+  const retry = (ms) => { if (!retried) { retried = true; setTimeout(listen, ms); } };
   const req = http.get(`${ORIGIN}/api/stream?client=shell`, (res) => {
     let buf = '';
     res.setEncoding('utf8');
@@ -98,9 +102,12 @@ function listen() {
         }
       }
     });
-    res.on('end', () => setTimeout(listen, 2000));
+    res.on('end', () => retry(2000));
+    res.on('close', () => retry(2000));
+    res.on('error', () => retry(3000));
   });
-  req.on('error', () => setTimeout(listen, 3000));
+  req.on('error', () => retry(3000));
+  req.on('close', () => retry(3000));
 }
 
 function buildMenu() {
