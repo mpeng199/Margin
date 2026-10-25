@@ -3,7 +3,7 @@ import { defineWebModule } from '@web/lib/module';
 import { useApi, queryClient } from '@web/lib/query';
 import { api } from '@web/lib/api';
 import { Section, Group, Item, Button, Input, toast } from '@web/ui';
-import { relDay, todayISO } from '@web/lib/format';
+import { relDay, relDayLower, todayISO } from '@web/lib/format';
 
 /** Evening capture: one calm line. Items land in tomorrow's inbox. */
 function EveningCapture() {
@@ -59,7 +59,7 @@ function FromLastNight() {
             {scheduling === i.id ? (
               <>
                 <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} aria-label="Schedule for" />
-                <Button variant="primary" onClick={() => { setScheduling(null); void act(`/api/capture/items/${i.id}/schedule`, { date }, `Scheduled for ${relDay(date).toLowerCase()}.`); }}>Set</Button>
+                <Button variant="primary" onClick={() => { setScheduling(null); void act(`/api/capture/items/${i.id}/schedule`, { date }, `Scheduled for ${relDayLower(date)}.`); }}>Set</Button>
               </>
             ) : (
               <>

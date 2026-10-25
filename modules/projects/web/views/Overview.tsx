@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { api } from '@web/lib/api';
 import { useApi, useAction } from '@web/lib/query';
-import { fmtDur, relDay, fmtDay, todayISO } from '@web/lib/format';
+import { fmtDur, relDay, relDayLower, fmtDay, todayISO } from '@web/lib/format';
 import { addDays } from '@core/time';
 import { Section, Group, Item, Button, Sheet, Field, Input, TextArea, Segmented, CapacityBar, Banner, Tag } from '@web/ui';
 import { SEPARATIONS, type Separation } from '../../model';
@@ -102,7 +102,7 @@ export function OverviewView({ id, project }: { id: string; project: Detail }) {
     <>
       {p.status === 'proposed' && (
         <div style={{ marginTop: 12 }}>
-          <Banner tone="amber" icon="Scale" action={<Button variant="primary" onClick={() => setSheet('activate')}>Activate…</Button>} why="Yes requires a no (Margin spec 4.5).">
+          <Banner tone="amber" icon="Scale" action={<Button variant="primary" onClick={() => setSheet('activate')}>Activate…</Button>} why="Yes requires a no: new work only replaces old work (Panagioti 2017).">
             This project is proposed. Activating it means pausing or dropping something of equal or larger size.
           </Banner>
         </div>
@@ -121,7 +121,7 @@ export function OverviewView({ id, project }: { id: string; project: Detail }) {
           )}
           <Item>
             <div className="title"><div className="small muted">Next milestone</div>
-              {o?.nextMilestone ? <>{o.nextMilestone.title}<div className="sub">{fmtDay(o.nextMilestone.date)}, {relDay(o.nextMilestone.date).toLowerCase()}{o.nextMilestone.kind === 'deadline' ? ', deadline' : ''}</div></> : <span className="muted">None on the timeline</span>}
+              {o?.nextMilestone ? <>{o.nextMilestone.title}<div className="sub">{fmtDay(o.nextMilestone.date)}, {relDayLower(o.nextMilestone.date)}{o.nextMilestone.kind === 'deadline' ? ', deadline' : ''}</div></> : <span className="muted">None on the timeline</span>}
             </div>
             {o?.currentPhase && <Tag>{o.currentPhase.title}</Tag>}
           </Item>
@@ -146,7 +146,7 @@ export function OverviewView({ id, project }: { id: string; project: Detail }) {
           <Item><div className="title">Open tasks</div><span className="meta num">{o?.openLoops.openTasks ?? 0}</span></Item>
           <Item><div className="title">Overdue</div><span className="meta num">{o?.openLoops.overdue ?? 0}</span></Item>
           {(o?.openLoops.waiting ?? []).map((w) => (
-            <Item key={w.id}><div className="title">Waiting on {w.who || 'someone'}<div className="sub">{w.what}</div></div><span className="meta">{w.due ? `due ${relDay(w.due).toLowerCase()}` : `since ${relDay(w.since).toLowerCase()}`}</span></Item>
+            <Item key={w.id}><div className="title">Waiting on {w.who || 'someone'}<div className="sub">{w.what}</div></div><span className="meta">{w.due ? `due ${relDayLower(w.due)}` : `since ${relDayLower(w.since)}`}</span></Item>
           ))}
         </Group>
       </Section>

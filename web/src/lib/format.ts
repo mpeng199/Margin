@@ -30,3 +30,8 @@ export function relDay(isoDate: string) {
   if (diff > 1 && diff < 7) return d.toFormat('EEEE');
   return d.toFormat('MMM d');
 }
+/** relDay for mid-sentence use: "today", "tomorrow", but "Monday", "Nov 8". */
+export function relDayLower(isoDate: string) {
+  const r = relDay(isoDate);
+  return /^(Today|Tomorrow|Yesterday)$/.test(r) ? r.toLowerCase() : r;
+}

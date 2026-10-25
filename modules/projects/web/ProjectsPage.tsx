@@ -3,7 +3,7 @@ import { useLocation, useSearch } from 'wouter';
 import { Page } from '@web/app/Page';
 import { api } from '@web/lib/api';
 import { useApi } from '@web/lib/query';
-import { fmtDur, relDay } from '@web/lib/format';
+import { fmtDur, relDay, relDayLower } from '@web/lib/format';
 import { Section, Group, Item, Button, Sheet, Field, Input, Select, Segmented, Banner, Empty, Tag, Icon, toast } from '@web/ui';
 import { slugify } from '../model';
 import { ActivateSheet } from './views/Activate';
@@ -110,7 +110,7 @@ function ProjectRow({ p, sp, restartDue, onActivate }: { p: Project; sp?: Summar
       <div className="title">
         <div>{p.name}</div>
         <div className="sub">
-          {p.status === 'pause' && p.restartDate ? `Restart decision ${relDay(p.restartDate).toLowerCase()}` : next ? `${next.title}, ${relDay(next.date).toLowerCase()}` : p.purpose || (p.status === 'maintain' ? p.maintenance?.action : '') || 'No milestone set'}
+          {p.status === 'pause' && p.restartDate ? `Restart decision ${relDayLower(p.restartDate)}` : next ? `${next.title}, ${relDayLower(next.date)}` : p.purpose || (p.status === 'maintain' ? p.maintenance?.action : '') || 'No milestone set'}
         </div>
       </div>
       {p.isSchool && <Tag>School</Tag>}
@@ -143,7 +143,7 @@ export function ProjectsPage() {
     <Page title="Projects" actions={<Button variant="primary" icon="Plus" disabled={!!locked} title={locked} onClick={() => setCreating(true)}>New Project</Button>}>
       {locked && <div style={{ marginTop: 12 }}><Banner tone="amber" icon="Lock">{locked}</Banner></div>}
       {s && (
-        <Section title="Work in progress" why="Two non-school projects at a time (Margin spec 4.5).">
+        <Section title="Work in progress" why="Two non-school projects at a time. Cutting load beats coping (Panagioti 2017).">
           <Group pad>
             <div className="row">
               <div className="pj-wip" role="meter" aria-valuemin={0} aria-valuemax={s.wip.limit} aria-valuenow={s.wip.count} aria-label="Non-school projects that are Core">

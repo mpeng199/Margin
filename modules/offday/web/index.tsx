@@ -103,16 +103,10 @@ function OffdayPage() {
   );
 }
 
-/** Evening: the leisure list, quietly. Nothing to say until there is a list. */
+/** Evening: the leisure list (SPEC 4.2/4.8), with the same "would I be upset if this produced nothing?" test. */
 function LeisureWidget() {
   const q = useApi<LeisureItem[]>('/api/offday/leisure');
-  const items = q.data ?? [];
-  if (!items.length) return null;
-  return (
-    <Section title="Leisure">
-      <Group>{items.slice(0, 5).map((i) => <Item key={i.id}><div className="title">{i.title}</div></Item>)}</Group>
-    </Section>
-  );
+  return q.data ? <Leisure items={q.data} /> : null;
 }
 
 /** The day before the off-day: what is due on it, what is booked on it, and one tap to clear it. */

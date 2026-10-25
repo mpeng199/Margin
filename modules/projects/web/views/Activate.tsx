@@ -54,7 +54,7 @@ export function ActivateSheet({ project, tradeoffs, onClose }: { project: Projec
         </Field>
         {target === 'maintain' && <MaintenanceFields value={mt} onChange={setMt} />}
         <ErrorLine error={error} />
-        <Why source="Margin spec 4.5">Two non-school projects at a time. A new one waits until something of equal size steps aside.</Why>
+        <Why source="Panagioti 2017">Two non-school projects at a time. A new one waits until something of equal size steps aside.</Why>
       </div>
     </Sheet>
   );

@@ -24,7 +24,7 @@
 .pj-swatches { display: flex; gap: 6px; flex-wrap: wrap; }
 .pj-swatch { width: 22px; height: 22px; border-radius: 50%; border: 0; display: grid; place-items: center; color: #fff; padding: 0; }
 .pj-swatch[aria-checked='true'] { box-shadow: 0 0 0 2px var(--bg-group), 0 0 0 4px var(--ink-2); }
-.pj-inline { resize: none; background: transparent; box-shadow: none; padding: 0; }
+.pj-inline { width: 100%; resize: none; background: transparent; box-shadow: none; padding: 0; }
 .pj-inline:focus { box-shadow: none; }
 .pj-task .pj-owner { width: 90px; flex: none; color: var(--ink-2); }
 .pj-task .pj-est { width: 108px; flex: none; }

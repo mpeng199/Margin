@@ -4,7 +4,7 @@ import { defineWebModule } from '@web/lib/module';
 import { Page } from '@web/app/Page';
 import { api } from '@web/lib/api';
 import { queryClient, useApi } from '@web/lib/query';
-import { fmtDay, relDay, todayISO } from '@web/lib/format';
+import { fmtDay, relDay, relDayLower, todayISO } from '@web/lib/format';
 import { daysBetween } from '@core/time';
 import { Section, Group, Item, Button, IconButton, Sheet, Field, Input, Select, TextArea, Check, Tag, Empty, Banner, toast } from '@web/ui';
 import type { Cadence, CheckinNote, DelegatedFunction, Script, WaitingItem } from '../manifest';
@@ -131,7 +131,7 @@ export function People({ projectId }: { projectId: string }) {
                   {f.decisionRights && <div className="sub">Decides: {f.decisionRights}</div>}
                   {f.goodEnough && <div className="sub">Good enough: {f.goodEnough}</div>}
                 </div>
-                {f.owner && (late ? <Tag tone="amber">Check-in {late} day{late === 1 ? '' : 's'} overdue</Tag> : <Tag>Next check-in {relDay(f.nextCheckin).toLowerCase()}</Tag>)}
+                {f.owner && (late ? <Tag tone="amber">Check-in {late} day{late === 1 ? '' : 's'} overdue</Tag> : <Tag>Next check-in {relDayLower(f.nextCheckin)}</Tag>)}
                 <span className="meta">{CADENCE[f.cadence]}, {f.checkinMin} min</span>
                 {f.owner && <Button onClick={() => setSheet({ t: 'checkin', fn: f })}>Log Check-in…</Button>}
                 <IconButton icon="Pencil" label={`Edit ${f.name}`} onClick={() => setSheet({ t: 'fn', fn: f })} />

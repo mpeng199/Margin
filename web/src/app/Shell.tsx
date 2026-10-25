@@ -137,7 +137,6 @@ function EveningView() {
         <div className="content-narrow evening-stack">
           <WidgetSlot slot="evening" />
           <div className="evening-foot">
-            {!done && <p className="muted small">Shutdown isn’t logged yet. It takes about ten minutes.</p>}
             <button className="btn plain small" onClick={() => brk.mutate({ view: 'evening' } as any)}>
               I’m breaking my stop
             </button>
