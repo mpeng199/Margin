@@ -111,17 +111,12 @@ export function createCheckinService(ctx: Ctx) {
     /** What the form starts with: last night's lights-out (or the previous entry) and today's wake setting. */
     prefill(date: ISODate = today()): { bedtime: string; wakeTime: string } {
       const day = ctx.maybe<any>('day');
-      const prev = addDays(date, -1);
-      let bedtime: string | undefined;
-      try { bedtime = day?.anchors(prev).lightsOut.toFormat('HH:mm'); } catch { /* day module unavailable */ }
-      if (!bedtime) {
-        const last = ctx.db.get('SELECT bedtime FROM checkins WHERE date < ? ORDER BY date DESC LIMIT 1', date);
-        if (last) bedtime = fromISO(last.bedtime).toFormat('HH:mm');
-      }
-      bedtime ??= kvGet<any>(ctx.db, 'checkin.baseline', null)?.bedtime ?? '22:30';
-      let wakeTime: string | undefined;
-      try { wakeTime = day?.anchors(date).wake.toFormat('HH:mm'); } catch { /* ignore */ }
-      wakeTime ??= '06:30';
+      const attempt = (f: () => string | undefined): string | undefined => { try { return f(); } catch { return undefined; } };
+      const lightsOut = attempt(() => day?.anchors(addDays(date, -1)).lightsOut.toFormat('HH:mm'));
+      const prevEntry = ctx.db.get<{ bedtime: string }>('SELECT bedtime FROM checkins WHERE date < ? ORDER BY date DESC LIMIT 1', date);
+      const bedtime = lightsOut ?? (prevEntry ? fromISO(prevEntry.bedtime).toFormat('HH:mm') : undefined)
+        ?? kvGet<any>(ctx.db, 'checkin.baseline', null)?.bedtime ?? '22:30';
+      const wakeTime = attempt(() => day?.anchors(date).wake.toFormat('HH:mm')) ?? '06:30';
       return { bedtime, wakeTime };
     },
 

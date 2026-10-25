@@ -1,0 +1,19 @@
+/* plan — Today widgets and the Plan the Day page. Prefix: plan- */
+.plan-est { display: inline-flex; align-items: center; gap: 4px; }
+.plan-est .input { width: 58px; text-align: right; font-variant-numeric: tabular-nums; }
+.plan-prio { width: 70px; }
+.plan-actions { display: flex; align-items: center; gap: 2px; flex: none; }
+.plan-triage { box-shadow: 0 0 0 0.5px color-mix(in srgb, var(--amber) 40%, transparent); }
+.plan-triage .item + .item::before { border-top-color: color-mix(in srgb, var(--amber) 22%, transparent); }
+.plan-over { color: var(--amber); }
+.plan-carry { box-shadow: 0 0 0 0.5px color-mix(in srgb, var(--amber) 40%, transparent); background: color-mix(in srgb, var(--amber-soft) 55%, var(--bg-group)); }
+.plan-carry .item + .item::before { border-top-color: color-mix(in srgb, var(--amber) 22%, transparent); }
+.plan-carry-actions { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s2); padding: 0 var(--s3) var(--s3) var(--s3); }
+.plan-sublabel { padding: 6px var(--s3) 2px; font-size: var(--t-sub); font-weight: 600; color: var(--ink-3); letter-spacing: 0.02em; }
+.plan-quiet { color: var(--ink-2); }
+.plan-quiet .title { font-size: var(--t-callout); }
+.plan-cap-list .item { min-height: 40px; }
+.plan-footnote { padding: var(--s2) var(--s1) 0; }
+.plan-gap-note { margin-top: var(--s2); }
+.plan-sheet-row { display: grid; grid-template-columns: 90px 1fr; align-items: center; gap: var(--s2) var(--s3); margin-top: var(--s3); }
+.plan-sheet-row > span { color: var(--ink-2); font-size: var(--t-callout); }

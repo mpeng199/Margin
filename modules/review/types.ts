@@ -32,7 +32,7 @@ export interface Decisions {
   deadlines: Record<string, string>;
   /** required step id → how it was resolved */
   required: Record<string, { how: string; projectId?: string; at: string }>;
-  proposed: Record<string, { action: 'activate' | 'decline'; tradeOffId?: string; at: string }>;
+  proposed: Record<string, { action: 'activate' | 'later'; tradeOffId?: string; at: string }>;
   projectChanges: { projectId: string; name: string; from: string; to: string; at: string }[];
   offday: { date: ISODate | null; confirmed: boolean; moves: Record<string, ISODate> };
 }
@@ -44,6 +44,10 @@ export interface Draft {
   priorities: Priority[];
   notes: string;
   summary: string;
+  /** Who wrote `summary`: Claude's text is kept at finish, Margin's is re-composed from the final decisions. */
+  summarySource: 'claude' | 'margin' | null;
+  /** Change set Claude proposed alongside its summary, if any. */
+  aiChangeSetId: string | null;
   decisions: Decisions;
   changeSetId: string | null;
   startedAt: string | null;
@@ -57,7 +61,7 @@ export const emptyDecisions = (): Decisions => ({
 });
 export const emptyDraft = (weekStart: ISODate): Draft => ({
   weekStart, step: 0, done: {}, scores: { energy: null, dread: null, effective: null }, priorities: [],
-  notes: '', summary: '', decisions: emptyDecisions(), changeSetId: null, startedAt: null, updatedAt: null, completedAt: null,
+  notes: '', summary: '', summarySource: null, aiChangeSetId: null, decisions: emptyDecisions(), changeSetId: null, startedAt: null, updatedAt: null, completedAt: null,
 });
 
 export interface RequiredStep { id: string; label: string; ruleId?: string }
