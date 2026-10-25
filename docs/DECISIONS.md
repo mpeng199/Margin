@@ -127,3 +127,29 @@ Tue 6–8 AM). Everything is editable on the same screen.
 **Model work split.** The coordinator built the shell, integrations, day module, onboarding, backup and
 tooling; feature modules were built by parallel agents against written service/event contracts
 (docs/AGENT_BRIEF.md), then integrated and reviewed.
+
+## Calls made while building the modules
+
+- **Shutdown can't finish with an open loop lacking a next action, an uncovered deadline in the next
+  72 hours (unless you accept the risk with a reason), or the phone step unconfirmed.** If those steps are
+  removed from the editable ritual, the flow re-inserts them before the last step so the rules stay
+  satisfiable.
+- **Off-day "Move to Sunday/Monday" applies its change set on the click** (the click is the yes) and
+  links to the record in Review changes.
+- **Rule banners are hidden per day, not dismissed in the engine**: hiding a banner never lifts the lock
+  that came with it (e.g. adding projects while sleep is short).
+- **New projects always start as Proposed** and activate only through an equal-size trade
+  (yes requires a no), from the projects list, the project's Overview, or the weekly review.
+- **Focus blocks** end at the hard stop (starting after it is refused), keep running state in the DB so
+  they survive restarts, and log elapsed minutes from instants (the repeated 1 AM hour counts once).
+- **Training warning signs** (SPEC lists no thresholds): resting HR ≥ 5 bpm over the prior 4-week mean,
+  a lift not improving its best estimated 1RM across ≥ 2 sessions in 14 days, 7-day mean soreness ≥ 6,
+  ≥ 2 dreaded sessions in 7 days. Two or more suggest a deload (cited: Meeusen et al. 2013 consensus).
+- **MCP reads go through `/api/ai/read/*`**, which apply the "share check-in data" filter, so sleep,
+  energy and mood never reach Claude Code unless that toggle is on.
+- **Plan-login Claude** strips `ANTHROPIC_API_KEY` and related variables from the child process so a key
+  can't silently bill instead of the plan; the budget cap applies only to the API-key provider.
+- **Calendars for seed projects** are created only for Core and Maintain projects during onboarding, so
+  paused side projects don't add a dozen calendars to the phone.
+- **Countdowns use the daemon's clock** (the UI measures its offset from `/api/day/state`), which keeps
+  them right if the browser clock drifts and makes dev time-travel possible (`POST /api/dev/clock`).
