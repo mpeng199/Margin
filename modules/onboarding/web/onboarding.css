@@ -1,0 +1,17 @@
+.ob { height: 100vh; overflow-y: auto; background: var(--bg-content); }
+.ob-drag { position: fixed; top: 0; left: 0; right: 0; height: 40px; -webkit-app-region: drag; z-index: 1; }
+.ob-inner { max-width: 680px; margin: 0 auto; padding: 64px 24px 48px; }
+.ob-progress { display: flex; gap: 6px; margin-bottom: 20px; }
+.ob-progress span { flex: 1; height: 3px; border-radius: 2px; background: var(--bg-inset); transition: background 0.3s var(--ease); }
+.ob-progress span.done { background: color-mix(in srgb, var(--accent) 55%, transparent); }
+.ob-progress span.now { background: var(--accent); }
+.ob-title { font: 700 28px / 1.15 var(--font-display); letter-spacing: 0.004em; margin: 4px 0 6px; }
+.ob-lede { color: var(--ink-2); font-size: 14px; line-height: 1.5; margin-bottom: 16px; max-width: 60ch; }
+.ob-body .section:first-of-type { margin-top: 12px; }
+.ob-nav { display: flex; align-items: center; gap: 8px; margin-top: 32px; padding-top: 16px; border-top: 0.5px solid var(--line); }
+.ob-wake { display: flex; justify-content: center; margin: 8px 0 20px; }
+.ob-time { font: 300 44px / 1 var(--font-display) !important; height: 64px !important; padding: 0 16px !important; text-align: center; }
+.ob-math { font-size: 14px; line-height: 1.8; }
+.ob-math div:last-child { font-weight: 600; }
+.ob-block { flex-wrap: wrap; }
+.ob-proj .select { max-width: 170px; }
