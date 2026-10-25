@@ -48,8 +48,8 @@ button { font: inherit; color: inherit; }
 }
 
 /* ------------------------------------------------------------------ App frame */
-.app { display: grid; grid-template-columns: var(--sidebar-w, 216px) 1fr; height: 100%; transition: grid-template-columns 0.2s var(--ease); }
-.app.no-sidebar { grid-template-columns: 0 1fr; }
+.app { display: grid; grid-template-columns: var(--sidebar-w, 216px) minmax(0, 1fr); overflow: hidden; height: 100%; transition: grid-template-columns 0.2s var(--ease); }
+.app.no-sidebar { grid-template-columns: 0 minmax(0, 1fr); }
 .sidebar {
   background: var(--bg-sidebar);
   border-right: 0.5px solid var(--line);

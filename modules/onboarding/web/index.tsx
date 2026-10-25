@@ -5,7 +5,7 @@ import { useApi, queryClient } from '@web/lib/query';
 import { api } from '@web/lib/api';
 import { useModules } from '@web/lib/hooks';
 import { Section, Group, Item, Button, Input, Select, Toggle, Tag, Banner, toast, Icon } from '@web/ui';
-import { fmtDur, fmtDay } from '@web/lib/format';
+import { fmtDur, fmtDay, todayISO } from '@web/lib/format';
 import { TodoistAccount } from '../../todoist/web';
 import { GoogleAccount } from '../../google/web';
 import './onboarding.css';
@@ -345,7 +345,7 @@ const RED_FLAGS = [
   'Big changes in eating or weight, or using caffeine, nicotine, alcohol or other drugs to cope',
 ];
 function Baseline({ has }: { has: (id: string) => boolean }) {
-  const [v, setV] = useState({ bedtime: '23:30', wakeTime: '06:30', caffeineTime: '15:00', energy: 4, dread: 6, effective: 4, phase1Start: new Date().toISOString().slice(0, 10) });
+  const [v, setV] = useState({ bedtime: '23:30', wakeTime: '06:30', caffeineTime: '15:00', energy: 4, dread: 6, effective: 4, phase1Start: todayISO() });
   const [flags, setFlags] = useState<boolean[]>(RED_FLAGS.map(() => false));
   const [saved, setSaved] = useState(false);
   const [, navigate] = useLocation();

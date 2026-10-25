@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useApi } from './query';
+import { serverNow, setServerOffset } from './format';
 import type { DayState } from '@modules/day/manifest';
 
 export interface ModuleInfo {
@@ -15,12 +16,11 @@ export function useEnabled(id: string) {
   const { data } = useModules();
   return !!data?.find((m) => m.id === id && m.enabled);
 }
-/** Server clock minus client clock (the daemon is the time authority; dev can pin it). */
-let serverOffset = 0;
-export const serverNow = () => Date.now() + serverOffset;
+/** The daemon is the time authority (dev can pin it); the UI measures its offset. */
+export { serverNow };
 export function useDay() {
   const q = useApi<DayState>('/api/day/state', { refetchInterval: 30_000 });
-  if (q.data) serverOffset = Date.parse(q.data.now) - q.dataUpdatedAt;
+  if (q.data) setServerOffset(Date.parse(q.data.now) - q.dataUpdatedAt);
   return q;
 }
 export function useSettings<T = any>(module: string) {
