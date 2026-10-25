@@ -12,6 +12,7 @@ import { streamSSE } from 'hono/streaming';
 import { ZodError } from 'zod';
 import type { Ctx } from './types';
 import { ROOT } from './paths';
+import { now, setClock } from './time';
 
 type SSEClient = { kind: string; send: (event: string, data: unknown) => void };
 
@@ -117,6 +118,24 @@ export function createApp(ctx: Ctx, hub: Hub, port: number) {
       remove();
     });
   });
+
+  // ---- dev-only time travel (MARGIN_DEV=1): jump the clock to test the stop, evening and mornings
+  if (ctx.dev) {
+    app.get('/api/dev/clock', (c) => c.json({ now: now().toISO() }));
+    app.post('/api/dev/clock', async (c) => {
+      const { iso } = await c.req.json();
+      const target = Date.parse(iso);
+      if (Number.isNaN(target)) return c.json({ error: 'Bad ISO time' }, 400);
+      const offset = target - Date.now();
+      setClock(() => Date.now() + offset);
+      ctx.bus.emit('dev.clock', { now: now().toISO() });
+      return c.json({ now: now().toISO() });
+    });
+    app.post('/api/dev/notify', async (c) => {
+      const { title, body, category } = await c.req.json();
+      return c.json({ delivery: ctx.notify.send({ title: title ?? 'Test', body: body ?? 'Notification test from Margin.', category: category ?? 'system' }) });
+    });
+  }
 
   // ---- module routes at /api/<id>, guarded by the enabled flag
   for (const m of ctx.registry.all) {
