@@ -1,0 +1,55 @@
+{
+  "name": "margin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Margin — a local, burnout-proof planner for macOS.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "daemon": "tsx src/daemon.ts",
+    "dev": "concurrently -k -n daemon,web \"MARGIN_DEV=1 tsx watch src/daemon.ts\" \"vite --config web/vite.config.ts\"",
+    "build": "vite build --config web/vite.config.ts",
+    "shell": "electron shell/main.cjs",
+    "package": "node scripts/package-shell.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "mcp": "tsx src/mcp/server.ts",
+    "new-module": "node scripts/new-module.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.3.310",
+    "@anthropic-ai/sdk": "^1.3.0",
+    "@hono/node-server": "^2.1.5",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@napi-rs/keyring": "^2.1.2",
+    "@tanstack/react-query": "^5.104.5",
+    "cmdk": "^1.1.1",
+    "hono": "^4.13.13",
+    "lucide-react": "^1.61.0",
+    "luxon": "^3.7.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-markdown": "^10.1.0",
+    "wouter": "^3.13.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "@playwright/test": "^1.64.1",
+    "@types/luxon": "^3.7.6",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.6",
+    "electron": "^45.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  }
+}

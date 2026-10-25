@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "margin-dev",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--no-warnings", "--import", "tsx", "src/daemon.ts"],
+      "env": { "MARGIN_DATA_DIR": ".margin-dev", "MARGIN_PORT": "7318", "MARGIN_KEYCHAIN": "memory", "MARGIN_NOTIFY": "log", "MARGIN_DEV": "1" },
+      "port": 7318
+    }
+  ]
+}

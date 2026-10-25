@@ -1,0 +1,12 @@
+import { useSyncExternalStore } from 'react';
+let open = false;
+let captureOpen = false;
+const subs = new Set<() => void>();
+const emit = () => subs.forEach((s) => s());
+const sub = (cb: () => void) => { subs.add(cb); return () => subs.delete(cb); };
+export const openPalette = () => { open = true; emit(); };
+export const closePalette = () => { open = false; emit(); };
+export const usePaletteOpen = () => useSyncExternalStore(sub, () => open);
+export const openCapture = () => { captureOpen = true; emit(); };
+export const closeCapture = () => { captureOpen = false; emit(); };
+export const useCaptureOpen = () => useSyncExternalStore(sub, () => captureOpen);

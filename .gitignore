@@ -1,0 +1,13 @@
+node_modules/
+dist/
+web/dist/
+out/
+.env
+.env.*
+*.db
+*.db-wal
+*.db-shm
+test-results/
+playwright-report/
+.DS_Store
+.margin-dev/

@@ -1,0 +1,70 @@
+// Installs the background daemon as a launchd agent (starts at login, restarts if it dies),
+// packages Margin.app when the shell changed, then opens it. Safe to run repeatedly.
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import { execFileSync, spawnSync } from 'node:child_process';
+
+const root = path.resolve(import.meta.dirname, '..');
+const label = 'dev.minimike.margin';
+const uid = process.getuid();
+const plistPath = path.join(os.homedir(), 'Library', 'LaunchAgents', `${label}.plist`);
+const logDir = path.join(os.homedir(), 'Library', 'Logs', 'Margin');
+fs.mkdirSync(logDir, { recursive: true });
+fs.mkdirSync(path.dirname(plistPath), { recursive: true });
+
+const node = process.execPath;
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const plist = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>${label}</string>
+  <key>ProgramArguments</key><array>
+    <string>${esc(node)}</string><string>--no-warnings</string><string>--import</string><string>tsx</string><string>src/daemon.ts</string>
+  </array>
+  <key>WorkingDirectory</key><string>${esc(root)}</string>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ThrottleInterval</key><integer>10</integer>
+  <key>ProcessType</key><string>Interactive</string>
+  <key>EnvironmentVariables</key><dict>
+    <key>PATH</key><string>${esc(path.dirname(node))}:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>StandardOutPath</key><string>${esc(logDir)}/daemon.log</string>
+  <key>StandardErrorPath</key><string>${esc(logDir)}/daemon.log</string>
+</dict></plist>
+`;
+const changed = !fs.existsSync(plistPath) || fs.readFileSync(plistPath, 'utf8') !== plist;
+fs.writeFileSync(plistPath, plist);
+if (changed) spawnSync('launchctl', ['bootout', `gui/${uid}/${label}`], { stdio: 'ignore' });
+const loaded = spawnSync('launchctl', ['print', `gui/${uid}/${label}`], { stdio: 'ignore' }).status === 0;
+if (!loaded) execFileSync('launchctl', ['bootstrap', `gui/${uid}`, plistPath]);
+else spawnSync('launchctl', ['kickstart', '-k', `gui/${uid}/${label}`], { stdio: 'ignore' });
+
+// Wait for the daemon.
+let up = false;
+for (let i = 0; i < 60 && !up; i++) {
+  try { up = (await fetch('http://127.0.0.1:7317/api/health')).ok; } catch { /* starting */ }
+  if (!up) await new Promise((r) => setTimeout(r, 250));
+}
+if (!up) { console.error(`The daemon didn't start. See ${logDir}/daemon.log`); process.exit(1); }
+console.log('Background service running (launchd agent dev.minimike.margin).');
+
+// Package the shell only when its sources changed.
+const hash = crypto.createHash('sha1');
+for (const f of fs.readdirSync(path.join(root, 'shell'), { recursive: true })) {
+  const p = path.join(root, 'shell', String(f));
+  if (fs.statSync(p).isFile()) hash.update(String(f)).update(fs.readFileSync(p));
+}
+const stamp = path.join(root, 'out', '.shell-hash');
+const app = path.join(os.homedir(), 'Applications', 'Margin.app');
+const digest = hash.digest('hex');
+if (!fs.existsSync(app) || !fs.existsSync(stamp) || fs.readFileSync(stamp, 'utf8') !== digest) {
+  console.log('Packaging Margin.app…');
+  execFileSync(process.execPath, [path.join(root, 'scripts/package-shell.mjs')], { stdio: 'inherit', cwd: root });
+  fs.mkdirSync(path.dirname(stamp), { recursive: true });
+  fs.writeFileSync(stamp, digest);
+}
+if (!process.argv.includes('--no-open')) spawnSync('open', [app]);
+console.log('Margin is open. It also starts at login.');

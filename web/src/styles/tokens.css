@@ -1,0 +1,132 @@
+/*
+ * Margin design tokens.
+ * Controls follow the platform (system type, system accent). Identity lives in one place:
+ * the horizon — day vs. dusk. Evening mode swaps the surface tokens for the dusk set.
+ */
+:root {
+  color-scheme: light dark;
+
+  /* Type — macOS text styles (pt == CSS px at 1x) */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, monospace;
+  --t-large: 26px;  /* Large Title */
+  --t-title1: 22px;
+  --t-title2: 17px;
+  --t-title3: 15px;
+  --t-body: 13px;
+  --t-callout: 12px;
+  --t-sub: 11px;
+  --t-foot: 10px;
+
+  /* Space (4-pt grid) and shape: radius grows with the size of the container */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s8: 32px; --s10: 40px;
+  --r-control: 6px;
+  --r-group: 10px;
+  --r-sheet: 14px;
+
+  /* Platform accent — the shell injects the macOS accent color; browsers fall back to system blue */
+  --accent: #007aff;
+  --accent-ink: #fff;
+
+  /* Light surfaces */
+  --bg-window: #f5f5f7;
+  --bg-sidebar: rgba(236, 236, 240, 0.86);
+  --bg-content: #fbfbfd;
+  --bg-group: #ffffff;
+  --bg-control: #ffffff;
+  --bg-hover: rgba(0, 0, 0, 0.045);
+  --bg-selected: rgba(0, 0, 0, 0.075);
+  --bg-inset: rgba(0, 0, 0, 0.035);
+  --ink: rgba(0, 0, 0, 0.86);
+  --ink-2: rgba(0, 0, 0, 0.56);
+  --ink-3: rgba(0, 0, 0, 0.34);
+  --line: rgba(0, 0, 0, 0.09);
+  --line-strong: rgba(0, 0, 0, 0.16);
+  --shadow-control: 0 0.5px 1px rgba(0, 0, 0, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 12px 40px rgba(0, 0, 0, 0.16), 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+
+  /* Signals — one meaning each */
+  --amber: #b25000;          /* over capacity / needs a decision   (5.3:1 on white) */
+  --amber-soft: rgba(255, 149, 0, 0.13);
+  --green: #1e7f37;          /* on track                          (5.1:1 on white) */
+  --green-soft: rgba(52, 199, 89, 0.13);
+  --red: #c4271c;            /* Get help, red flags only          (5.6:1 on white) */
+  --red-soft: rgba(255, 59, 48, 0.1);
+
+  /* The horizon: day light and dusk */
+  --day: #f2c46d;
+  --dusk: #59618f;
+  --dusk-soft: rgba(89, 97, 143, 0.14);
+  --dusk-deep: #2c3152;
+
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 45%, transparent);
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-window: #1e1e20;
+    --bg-sidebar: rgba(40, 40, 44, 0.82);
+    --bg-content: #1c1c1e;
+    --bg-group: #2a2a2d;
+    --bg-control: #3a3a3d;
+    --bg-hover: rgba(255, 255, 255, 0.06);
+    --bg-selected: rgba(255, 255, 255, 0.1);
+    --bg-inset: rgba(255, 255, 255, 0.05);
+    --ink: rgba(255, 255, 255, 0.88);
+    --ink-2: rgba(255, 255, 255, 0.6);
+    --ink-3: rgba(255, 255, 255, 0.36);
+    --line: rgba(255, 255, 255, 0.09);
+    --line-strong: rgba(255, 255, 255, 0.16);
+    --shadow-control: 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+    --shadow-float: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 0.5px rgba(255, 255, 255, 0.12);
+    --accent: #0a84ff;
+    --amber: #ffb340;
+    --amber-soft: rgba(255, 179, 64, 0.14);
+    --green: #4cd964;
+    --green-soft: rgba(48, 209, 88, 0.14);
+    --red: #ff6961;
+    --red-soft: rgba(255, 105, 97, 0.14);
+    --day: #e9b85c;
+    --dusk: #9aa3d6;
+    --dusk-soft: rgba(154, 163, 214, 0.14);
+    --dusk-deep: #c9cff0;
+  }
+}
+
+/* Evening: the app sets. Same layout, cooler and dimmer surfaces, accent becomes dusk. */
+[data-mode='evening'] {
+  --bg-window: #eceef5;
+  --bg-content: #f3f4f9;
+  --bg-group: #fafbfe;
+  --accent: #4f5888;
+  --ink: rgba(20, 24, 48, 0.84);
+  --ink-2: rgba(20, 24, 48, 0.55);
+}
+@media (prefers-color-scheme: dark) {
+  [data-mode='evening'] {
+    --bg-window: #12141c;
+    --bg-content: #151824;
+    --bg-group: #1d2130;
+    --bg-control: #282d40;
+    --accent: #9aa3d6;
+    --accent-ink: #12141c;
+    --ink: rgba(232, 230, 244, 0.86);
+    --ink-2: rgba(232, 230, 244, 0.56);
+    --ink-3: rgba(232, 230, 244, 0.34);
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root { --line: rgba(0, 0, 0, 0.24); --ink-2: rgba(0, 0, 0, 0.7); --ink-3: rgba(0, 0, 0, 0.55); }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root { --line: rgba(255, 255, 255, 0.28); --ink-2: rgba(255, 255, 255, 0.76); --ink-3: rgba(255, 255, 255, 0.58); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root { --bg-sidebar: #ececf0; }
+}
+@media (prefers-reduced-transparency: reduce) and (prefers-color-scheme: dark) {
+  :root { --bg-sidebar: #28282c; }
+}
