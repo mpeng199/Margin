@@ -13,5 +13,8 @@
 .ob-time { font: 300 44px / 1 var(--font-display) !important; height: 64px !important; padding: 0 16px !important; text-align: center; }
 .ob-math { font-size: 14px; line-height: 1.8; }
 .ob-math div:last-child { font-weight: 600; }
-.ob-block { flex-wrap: wrap; }
+.ob-block { flex-wrap: nowrap; gap: 8px; }
+.ob-block .input[type='time'] { width: 104px; }
+.ob-free { height: 6px; border-radius: 3px; background: var(--bg-inset); overflow: hidden; }
+.ob-free > div { height: 100%; background: var(--accent); border-radius: 3px; }
 .ob-proj .select { max-width: 170px; }

@@ -1,0 +1,32 @@
+/* Weekly review. Prefix rv- */
+.rv-head { margin-bottom: var(--s4); }
+.rv-eyebrow { display: flex; align-items: center; gap: var(--s2); font-size: var(--t-callout); color: var(--ink-2); }
+.rv-head h2 { font-family: var(--font-display); font-size: var(--t-title1); font-weight: 600; margin: 2px 0 6px; outline: none; }
+.rv-head p { margin: 0; }
+.rv-dots { display: flex; gap: 4px; margin-top: var(--s2); }
+.rv-dots button { flex: 1; height: 16px; padding: 0; border: 0; background: none; position: relative; cursor: pointer; border-radius: 4px; }
+.rv-dots button::after { content: ''; position: absolute; left: 0; right: 0; top: 6px; height: 4px; border-radius: 2px; background: var(--line-strong); }
+.rv-dots button[data-done='true']::after { background: color-mix(in srgb, var(--accent) 40%, transparent); }
+.rv-dots button[aria-current='step']::after { background: var(--accent); }
+
+.rv-stack { flex-direction: column; align-items: stretch; gap: var(--s2); }
+.rv-wrap { flex-wrap: wrap; }
+.rv-grid { display: grid; gap: var(--s2) var(--s3); grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.rv-grid .input, .rv-grid .select { width: 100%; }
+.rv-full { width: 100%; }
+.rv-err { color: var(--amber); font-size: var(--t-callout); }
+.rv-note { color: var(--ink-2); font-size: var(--t-callout); }
+
+.rv-slider { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--s3); width: 100%; }
+.rv-slider input[type='range'] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); margin: 6px 0 2px; }
+.rv-slider[data-unset='true'] input[type='range'] { opacity: 0.5; }
+.rv-slider .rv-value { font-size: var(--t-title2); font-variant-numeric: tabular-nums; text-align: right; min-width: 3.5em; }
+.rv-slider .rv-ends { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: var(--t-sub); color: var(--ink-3); }
+
+.rv-slot { min-width: 0; flex: 1; }
+.rv-num { width: 88px; }
+.rv-summary { white-space: pre-wrap; font-family: var(--font); font-size: var(--t-body); line-height: 1.5; margin: 0; color: var(--ink); }
+
+.rv-actions { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-top: var(--s5); padding-bottom: var(--s6); }
+.rv-actions .rv-save { font-size: var(--t-sub); color: var(--ink-3); flex: 1; text-align: center; }
+.rv-blockers { margin: var(--s4) 0 0; padding: 0; list-style: none; display: grid; gap: 2px; font-size: var(--t-callout); color: var(--amber); }

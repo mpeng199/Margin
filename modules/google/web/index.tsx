@@ -66,7 +66,7 @@ export function GoogleAccount({ compact }: { compact?: boolean }) {
         </div>
       )}
       <Group>
-        {!s.clientConfigured || (!live && !compact) ? (
+        {!s.clientConfigured ? (
           <Item style={{ alignItems: 'stretch', flexDirection: 'column', gap: 8 }}>
             <div className="small muted">Create a Desktop OAuth client in Google Cloud (README, step 2), then paste the downloaded JSON or the ID and secret. Stored in the Keychain.</div>
             <TextArea rows={2} placeholder='Paste client_secret_….json contents (optional)' value={json} onChange={(e) => setJson(e.target.value)} aria-label="OAuth client JSON" />
@@ -79,8 +79,8 @@ export function GoogleAccount({ compact }: { compact?: boolean }) {
         ) : null}
         <Item>
           <div className="title">
-            <div>{live ? 'Connected' : s.clientConfigured ? 'Ready to connect' : 'Using mock calendars'}</div>
-            <div className="sub">{s.lastSyncAt ? `Synced ${dt(s.lastSyncAt).toRelative()}` : 'Not synced yet'}{s.canWriteOwned ? ' · may write to your own calendars after you confirm each change' : ''}</div>
+            <div>{live ? 'Connected' : s.clientConfigured ? 'Ready to connect your Google account' : 'Using mock calendars until you connect'}</div>
+            <div className="sub">{live ? (s.lastSyncAt ? `Synced ${dt(s.lastSyncAt).toRelative()}` : 'Not synced yet') : 'A local stand-in that behaves like Google Calendar.'}{s.canWriteOwned ? ' · may write to your own calendars after you confirm each change' : ''}</div>
           </div>
           {s.connecting ? <span className="small muted">Waiting for Google…</span> : (
             <>

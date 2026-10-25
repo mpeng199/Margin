@@ -206,7 +206,7 @@ describe('review: rule conditions', () => {
     const hi = await boot('2026-10-11T15:00:00-04:00');
     await weeks(hi, [['2026-10-11', 5, 6, 5], ['2026-10-18', 5, 7, 5], ['2026-10-25', 5, 8, 5]]);
     expect(await ruleFires(hi, 'review.dread_high', { score: 7, weeks: 2 })).toBe(true);
-    expect(hi.ctx.rules.active().find((f: any) => f.ruleId === 't-review.dread_high').detail).toBe('Dread was 7 and 8 in the last 2 weekly reviews.');
+    expect(hi.ctx.rules.active().find((f: any) => f.ruleId === 't-review.dread_high')!.detail).toBe('Dread was 7 and 8 in the last 2 weekly reviews.');
     expect(await ruleFires(hi, 'review.dread_high', { score: 7, weeks: 3 })).toBe(false); // week one was 6
 
     const one = await boot('2026-10-11T15:00:00-04:00');

@@ -1,0 +1,11 @@
+/* phases — one quiet line with a disclosure. */
+.phase-banner { margin-top: var(--s4); background: var(--bg-inset); border-radius: var(--r-group); padding: 0 var(--s4); }
+.phase-banner > summary { display: flex; align-items: center; gap: var(--s2); min-height: 32px; font-size: var(--t-callout); color: var(--ink-2); cursor: default; list-style: none; border-radius: var(--r-control); }
+.phase-banner > summary::-webkit-details-marker { display: none; }
+.phase-banner > summary:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.phase-banner > summary .chev { margin-left: auto; transition: transform 0.15s var(--ease); color: var(--ink-3); }
+.phase-banner[open] > summary .chev { transform: rotate(90deg); }
+.phase-banner > summary strong { color: var(--ink); font-weight: 600; }
+.phase-body { padding: 0 0 var(--s3); font-size: var(--t-callout); color: var(--ink-2); }
+.phase-body ul { margin: 0; padding-left: var(--s4); display: flex; flex-direction: column; gap: 2px; }
+.phase-body p { margin: var(--s2) 0 0; color: var(--ink-3); }

@@ -140,7 +140,7 @@ export function createReviewService(ctx: Ctx) {
       const target = t > w.reviewDate ? w : week(addDays(w.weekStart, -1));
       const since = kvGet<ISODate>(ctx.db, 'review.since', t);
       const later = ctx.db.get('SELECT 1 FROM reviews WHERE completed_at IS NOT NULL AND week_start >= ?', target.weekStart);
-      return { met: !later && target.reviewDate >= since && target.reviewDate < t, weekStart: target.weekStart, reviewDate: target.reviewDate };
+      return { met: !later && target.reviewDate > since && target.reviewDate < t, weekStart: target.weekStart, reviewDate: target.reviewDate };
     },
 
     /** Autosave. Structural edits are refused once the review is finished; the summary and notes stay editable. */

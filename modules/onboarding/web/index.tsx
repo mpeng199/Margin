@@ -4,7 +4,7 @@ import { defineWebModule } from '@web/lib/module';
 import { useApi, queryClient } from '@web/lib/query';
 import { api } from '@web/lib/api';
 import { useModules } from '@web/lib/hooks';
-import { Section, Group, Item, Button, Input, Select, Toggle, Tag, Banner, toast, CapacityBar, Icon } from '@web/ui';
+import { Section, Group, Item, Button, Input, Select, Toggle, Tag, Banner, toast, Icon } from '@web/ui';
 import { fmtDur, fmtDay } from '@web/lib/format';
 import { TodoistAccount } from '../../todoist/web';
 import { GoogleAccount } from '../../google/web';
@@ -134,7 +134,7 @@ function Blocks({ hasGoogle }: { hasGoogle: boolean }) {
       <Group>
         {blocks.map((b, i) => (
           <Item key={b.id} className="ob-block">
-            <Input value={b.label} onChange={(e) => upd(i, { label: e.target.value })} aria-label="Block name" style={{ width: 110 }} />
+            <Input value={b.label} onChange={(e) => upd(i, { label: e.target.value })} aria-label="Block name" style={{ width: 96 }} />
             <div className="days-picker" role="group" aria-label={`${b.label} days`}>
               {'MTWTFSS'.split('').map((d, k) => (
                 <button key={k} type="button" aria-pressed={b.days.includes(k + 1)} aria-label={DAYS[k]}
@@ -159,7 +159,7 @@ function Blocks({ hasGoogle }: { hasGoogle: boolean }) {
             {weekdays.map((d: any) => (
               <Item key={d.date}>
                 <span style={{ width: 90 }}>{fmtDay(d.date)}</span>
-                <div className="grow"><CapacityBar freeMin={Math.max(d.freeMin, 1)} loadMin={0} compact /></div>
+                <div className="grow ob-free" role="img" aria-label={`${fmtDur(d.freeMin)} free`}><div style={{ width: `${Math.min(100, (d.freeMin / 360) * 100)}%`, background: d.status === 'none' ? 'var(--amber)' : undefined }} /></div>
                 <span className="num" style={{ width: 70, textAlign: 'right', color: d.status === 'none' ? 'var(--amber)' : undefined }}>{fmtDur(d.freeMin)}</span>
               </Item>
             ))}
@@ -223,7 +223,7 @@ function Projects() {
   const [rows, setRows] = useState<any[] | null>(null);
   const [done, setDone] = useState(false);
   useEffect(() => {
-    if (seeds.data && !rows) setRows(seeds.data.map((s) => ({ ...s, include: true, link: 'label', createCalendar: true })));
+    if (seeds.data && !rows) setRows(seeds.data.map((s) => ({ ...s, include: true, link: s.status === 'pause' || s.status === 'drop' ? 'none' : 'label', createCalendar: s.status === 'core' || s.status === 'maintain' })));
   }, [seeds.data, rows]);
   if (existing.data && existing.data.length > 0 && !rows?.length) {
     return <p className="muted">You already have {existing.data.length} project tabs. Manage them from the sidebar.</p>;
@@ -326,7 +326,7 @@ function Deadlines() {
   };
   return (
     <>
-      <p className="ob-lede">These go on {apps.name}’s own timeline and calendar, not your main one, so they don’t crowd Today until they matter.</p>
+      <p className="ob-lede">These go on the {apps.name} tab’s own timeline and calendar, not your main one, so they don’t crowd Today until they matter.</p>
       <textarea className="textarea" rows={6} style={{ width: '100%' }} value={text} onChange={(e) => setText(e.target.value)}
         placeholder={'One per line, with the date last:\nRSI application — 2027-01-14\nSSP application — 2027-02-20\nMIT PRIMES — 2026-12-01'} aria-label="Application deadlines" />
       <p className="small muted" style={{ marginTop: 6 }}>{parsed.length ? `${parsed.length} deadline${parsed.length === 1 ? '' : 's'} recognized.` : 'Use YYYY-MM-DD dates.'}</p>

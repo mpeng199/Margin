@@ -140,7 +140,7 @@ export function createGoogleService(ctx: Ctx) {
       const sc = scopes();
       return {
         mode: s().mode,
-        clientConfigured: s().mode === 'mock' || !!clientCfg(),
+        clientConfigured: !!clientCfg(),
         connected: s().mode === 'mock' || ctx.keychain.has('google.refresh'),
         needsReconnect: kvGet(ctx.db, 'google.needsReconnect', false),
         connecting: !!pending,

@@ -1,0 +1,11 @@
+/* rules — editor lists and the step cards inside the sheet. */
+.rules-step { background: var(--bg-inset); border-radius: var(--r-group); padding: var(--s3); display: flex; flex-direction: column; gap: var(--s3); }
+.rules-step + .rules-step { margin-top: var(--s2); }
+.rules-step .head { display: flex; gap: var(--s2); align-items: center; }
+.rules-step .head .select { flex: 1; min-width: 0; }
+.rules-params { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--s3); }
+.rules-params .wide { grid-column: 1 / -1; }
+.rules-params .input, .rules-params .select, .rules-params .textarea { width: 100%; }
+.rules-block > h3 { margin: var(--s4) 0 var(--s2); font-size: var(--t-callout); font-weight: 600; color: var(--ink-2); }
+.rules-name { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
+.rules-off .title { color: var(--ink-3); }
