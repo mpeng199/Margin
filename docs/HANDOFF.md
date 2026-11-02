@@ -7,7 +7,7 @@ cd ~/minimike && ./start.sh
 ```
 
 Installs dependencies (first run), builds the app, installs the background service as a launchd agent
-(starts at login, restarts if it dies), packages **Margin.app** into `~/Applications` (registers itself as a
+(starts at login, restarts if it dies), packages **Margin.app** into `/Applications` (registers itself as a
 login item), and opens it. Safe to re-run. Margin opens into onboarding on mock data until you connect
 accounts. The 10-minute account guide is in `README.md` → "Connect your accounts".
 
@@ -64,3 +64,11 @@ accounts. The 10-minute account guide is in `README.md` → "Connect your accoun
   not hands-on clicking. "Save as template" exists in the API but has no button yet.
 - The capture shortcut (⌃⌥Space) is set by env var `MARGIN_CAPTURE_SHORTCUT`, not in Settings.
 - Margin.app is an unsigned local build (fine on this Mac).
+
+## Since then (Nov 2)
+
+- The code lives at **github.com/mpeng199/Margin** (public). This folder is the clone and the install.
+- **Updates**: Margin checks GitHub hourly and shows a notification, a Today banner and a toolbar
+  **Update** button; **Update and Restart** pulls, rebuilds and restarts in seconds. Verified end to end
+  twice against the real repo. Margin → Check for Updates… checks on demand.
+- Margin.app is in **/Applications** (Finder, Launchpad, Spotlight).
