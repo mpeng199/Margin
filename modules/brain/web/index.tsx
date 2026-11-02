@@ -89,7 +89,20 @@ function NoteList({ selected, onImport }: { selected: string | null; onImport: (
   const [, navigate] = useLocation();
   const [q, setQ] = useState(f.q);
   const searchRef = useRef<HTMLInputElement>(null);
+  const itemsRef = useRef<HTMLDivElement>(null);
   useEffect(() => { const t = setTimeout(() => setFilter({ q }), 180); return () => clearTimeout(t); }, [q]);
+  /** ↑↓ move through the list and open each note, as in Notes. */
+  const moveSelection = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    const rows = [...e.currentTarget.querySelectorAll<HTMLAnchorElement>('.brain-row')];
+    const i = rows.indexOf(document.activeElement as HTMLAnchorElement);
+    if (i < 0) return;
+    const next = rows[i + (e.key === 'ArrowDown' ? 1 : -1)];
+    if (!next) { if (e.key === 'ArrowUp') searchRef.current?.focus(); return; }
+    e.preventDefault();
+    next.focus();
+    next.click();
+  };
   useEffect(() => { if (f.q !== q && !f.q) setQ(''); }, [f.q]); // eslint-disable-line react-hooks/exhaustive-deps
   useHotkey('Mod+Alt+f', () => searchRef.current?.focus());
 
@@ -123,7 +136,11 @@ function NoteList({ selected, onImport }: { selected: string | null; onImport: (
         <label className="brain-search">
           <Icon name="Search" size={13} />
           <input ref={searchRef} className="input bare" value={q} placeholder="Search" aria-label="Search notes"
-            onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => { if (e.key === 'Escape') setQ(''); }} />
+            onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setQ('');
+              if (e.key === 'ArrowDown') { e.preventDefault(); itemsRef.current?.querySelector<HTMLElement>('.brain-row')?.focus(); }
+            }} />
           {q && <button className="brain-clear" aria-label="Clear search" onClick={() => setQ('')}><Icon name="X" size={11} /></button>}
         </label>
         <select className="select brain-scope" value={scope} onChange={(e) => onScope(e.target.value)} aria-label="Show">
@@ -136,7 +153,7 @@ function NoteList({ selected, onImport }: { selected: string | null; onImport: (
           <option value="trash">Recently Deleted</option>
         </select>
       </div>
-      <div className="brain-items" role="list">
+      <div className="brain-items" ref={itemsRef} onKeyDown={moveSelection}>
         {pinned.length > 0 && <div className="brain-group-label">Pinned</div>}
         {pinned.map((n) => <NoteRow key={n.id} n={n} selected={selected === n.id} />)}
         {pinned.length > 0 && rest.length > 0 && <div className="brain-group-label">Notes</div>}
@@ -160,7 +177,7 @@ function NoteList({ selected, onImport }: { selected: string | null; onImport: (
 
 function NoteRow({ n, selected }: { n: NoteSummary; selected: boolean }) {
   return (
-    <Link href={`/brain/${n.id}`} className="brain-row" aria-current={selected ? 'page' : undefined} role="listitem">
+    <Link href={`/brain/${n.id}`} className="brain-row" aria-current={selected ? 'page' : undefined}>
       <div className="brain-row-title">
         {n.pinned && <Icon name="Pin" size={11} className="brain-pin" />}
         <span className="ellipsis">{n.title}</span>
@@ -232,6 +249,8 @@ function NoteView({ id, startEditing }: { id: string; startEditing: boolean }) {
     try { await api.post(`/api/brain/notes/${id}/restore`); void refresh(); } catch (e: any) { toast(e.message); }
   };
   const deleted = !!n.deletedAt;
+  // A brand-new note starts on its title; Return then moves to the text.
+  const newNote = startEditing && !deleted && /^Untitled( \d+)?$/.test(n.title) && !n.body;
 
   return (
     <article className="brain-note" aria-label={n.title}>
@@ -242,12 +261,18 @@ function NoteView({ id, startEditing }: { id: string; startEditing: boolean }) {
         </Banner>
       )}
       <header className="brain-note-head">
-        <TitleField note={n} />
+        <TitleField note={n} autoFocus={newNote} />
         <div className="brain-meta">
           <AreaField note={n} disabled={deleted} />
           {n.tags.map((t) => (
             <button key={t} className="brain-chip" onClick={() => setFilter({ tag: t, area: null, q: '', trash: false })} title={`Show notes tagged #${t}`}>#{t}</button>
           ))}
+          {n.journal && (
+            <span className="brain-days">
+              <IconButton icon="ChevronLeft" label={n.journal.prev ? `Previous entry, ${fmtDay(n.journal.prev.date)}` : 'No earlier entry'} disabled={!n.journal.prev} onClick={() => n.journal?.prev && navigate(`/brain/${n.journal.prev.id}`)} />
+              <IconButton icon="ChevronRight" label={n.journal.next ? `Next entry, ${fmtDay(n.journal.next.date)}` : 'No later entry'} disabled={!n.journal.next} onClick={() => n.journal?.next && navigate(`/brain/${n.journal.next.id}`)} />
+            </span>
+          )}
           <span className="faint num brain-updated">
             {n.date ? dt(`${n.date}T12:00:00`).toFormat('cccc, LLLL d, yyyy') : n.updatedAt !== n.createdAt ? `Edited ${ago(n.updatedAt)}` : n.generated ? '' : `Created ${ago(n.createdAt)}`}
           </span>
@@ -263,13 +288,13 @@ function NoteView({ id, startEditing }: { id: string; startEditing: boolean }) {
         </div>
       </header>
       {(n.auto || n.wellbeing) && <FromMargin note={n} known={known} />}
-      <Body note={n} titles={titles.data ?? []} known={known} startEditing={startEditing && !deleted} readOnly={deleted} />
+      <Body note={n} titles={titles.data ?? []} known={known} startEditing={startEditing && !deleted} focusEditor={!newNote} readOnly={deleted} />
       <Connections note={n} />
     </article>
   );
 }
 
-function TitleField({ note }: { note: Note }) {
+function TitleField({ note, autoFocus }: { note: Note; autoFocus?: boolean }) {
   const locked = note.generated || !!note.date || !!note.deletedAt;
   const [value, setValue] = useState(note.title);
   useEffect(() => setValue(note.title), [note.title]);
@@ -284,11 +309,16 @@ function TitleField({ note }: { note: Note }) {
     } catch (e: any) { toast(e.message); setValue(note.title); }
   };
   return (
-    <input className="brain-title" value={value} readOnly={locked} aria-label="Title"
+    <input className="brain-title" value={value} readOnly={locked} aria-label="Title" autoFocus={autoFocus && !locked}
+      onFocus={(e) => { if (autoFocus) e.currentTarget.select(); }}
       title={locked ? (note.date ? 'Journal notes are named by their date.' : 'Named after its source in Margin.') : undefined}
       onChange={(e) => setValue(e.target.value)} onBlur={() => void commit()}
       onKeyDown={(e) => {
-        if (e.key === 'Enter') { e.preventDefault(); (e.target as HTMLInputElement).blur(); }
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          (e.target as HTMLInputElement).blur();
+          document.querySelector<HTMLTextAreaElement>('.brain-textarea')?.focus();
+        }
         if (e.key === 'Escape') { setValue(note.title); (e.target as HTMLInputElement).blur(); }
       }} />
   );
@@ -340,7 +370,7 @@ function FromMargin({ note, known }: { note: Note; known?: Set<string> }) {
 }
 
 /** The person's text. Read view by default; click, Edit or ⌘E to write. Saves 600 ms after you stop typing. */
-function Body({ note, titles, known, startEditing, readOnly }: { note: Note; titles: TitleRef[]; known?: Set<string>; startEditing: boolean; readOnly: boolean }) {
+function Body({ note, titles, known, startEditing, focusEditor, readOnly }: { note: Note; titles: TitleRef[]; known?: Set<string>; startEditing: boolean; focusEditor: boolean; readOnly: boolean }) {
   const [text, setText] = useState(note.body);
   // Empty notes open ready to type; so does an empty journal note, even with Margin's part filled in.
   const [editing, setEditing] = useState(!readOnly && (startEditing || (!note.body.trim() && (!note.auto || !!note.date))));
@@ -390,7 +420,7 @@ function Body({ note, titles, known, startEditing, readOnly }: { note: Note; tit
         )}
       </div>
       {editing ? (
-        <Editor value={text} onChange={setText} titles={titles} onDone={() => setEditing(false)} autoFocus />
+        <Editor value={text} onChange={setText} titles={titles} onDone={() => setEditing(false)} autoFocus={focusEditor} />
       ) : text.trim() ? (
         <div className="brain-read" onClick={(e) => { if (!readOnly && !(e.target as HTMLElement).closest('a') && !window.getSelection()?.toString()) setEditing(true); }}>
           <Markdown text={text} known={known} />

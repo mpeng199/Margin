@@ -37,12 +37,12 @@ export function Editor({ value, onChange, titles, onDone, autoFocus }: {
     el.style.height = 'auto';
     el.style.height = `${el.scrollHeight + 2}px`;
   }, [value]);
-  useLayoutEffect(() => {
+  useLayoutEffect(() => { // on mount only: a later prop change must not steal focus from another field
     if (!autoFocus || !ref.current) return;
     const el = ref.current;
     el.focus();
     el.setSelectionRange(el.value.length, el.value.length);
-  }, [autoFocus]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const look = (el: HTMLTextAreaElement) => {
     const pos = el.selectionStart;

@@ -37,6 +37,8 @@ export interface Note extends NoteSummary {
   links: { title: string; id: string | null }[];
   /** The person's text reads like crisis language: the note shows 988 and Get help. Nothing is logged or sent. */
   care: boolean;
+  /** Journal notes: the neighbouring days that have a note. */
+  journal?: { prev: { id: string; date: string } | null; next: { id: string; date: string } | null };
 }
 /** What compile produces: one note per source, or one journal entry per date. */
 export interface GenNote { source: string; title: string; area: string; auto: string; wellbeing?: string; /** Only when first created. */ pinned?: boolean }
@@ -141,6 +143,10 @@ export function createBrainService(ctx: Ctx) {
       ...summary(r), body: r.body, auto: r.auto, wellbeing: r.auto_wellbeing, tags: tagsOf(r.id), source: r.source,
       createdAt: r.created_at, compiledAt: r.compiled_at, deletedAt: r.deleted_at, backlinks: backlinks(r), links: outgoing(r),
       care: detectCrisis(r.body),
+      ...(r.date ? { journal: {
+        prev: db.get<{ id: string; date: string }>('SELECT id, date FROM brain_notes WHERE date < ? AND deleted_at IS NULL ORDER BY date DESC LIMIT 1', r.date) ?? null,
+        next: db.get<{ id: string; date: string }>('SELECT id, date FROM brain_notes WHERE date > ? AND deleted_at IS NULL ORDER BY date LIMIT 1', r.date) ?? null,
+      } } : {}),
     };
   }
 

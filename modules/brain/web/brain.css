@@ -49,6 +49,8 @@
 .brain-chip { border: 0; height: 22px; padding: 0 8px; border-radius: 11px; background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); font-size: var(--t-callout); }
 .brain-chip:hover { background: color-mix(in srgb, var(--accent) 20%, transparent); }
 .brain-updated { margin-left: 2px; }
+.brain-days { display: inline-flex; margin-left: 2px; }
+.brain-days .btn.icon { width: 22px; height: 22px; }
 .brain-meta-end { margin-left: auto; display: flex; gap: 2px; }
 .btn.icon.brain-on { color: var(--accent); }
 

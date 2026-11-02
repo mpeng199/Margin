@@ -2,19 +2,23 @@ import { useState } from 'react';
 import { defineWebModule } from '@web/lib/module';
 import { useApi, queryClient } from '@web/lib/query';
 import { api } from '@web/lib/api';
+import { useEnabled } from '@web/lib/hooks';
 import { Section, Group, Item, Button, Input, toast } from '@web/ui';
 import { relDay, relDayLower, todayISO } from '@web/lib/format';
 
-/** Evening capture: one calm line. Items land in tomorrow's inbox. */
+/** Evening capture: one calm line. Items land in tomorrow's inbox, or in your notes. */
 function EveningCapture() {
+  const brain = useEnabled('brain');
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
   const [last, setLast] = useState<string | null>(null);
-  const submit = async () => {
+  const submit = async (asNote = false) => {
     if (!text.trim()) return;
     setBusy(true);
     try {
-      const r = await api.post<{ message: string }>('/api/capture', { text });
+      const r = asNote
+        ? await api.post<{ title: string }>('/api/brain/capture', { text }).then((n) => ({ message: `Saved “${n.title}” to your notes.` }))
+        : await api.post<{ message: string }>('/api/capture', { text });
       setLast(r.message ?? 'Saved for tomorrow.');
       setText('');
       void queryClient.invalidateQueries();
@@ -25,8 +29,9 @@ function EveningCapture() {
       <Group pad>
         <div className="row">
           <Input className="grow" style={{ height: 32, fontSize: 14 }} value={text} placeholder="It’ll be in your inbox in the morning"
-            onChange={(e) => { setText(e.target.value); setLast(null); }} onKeyDown={(e) => { if (e.key === 'Enter') void submit(); }} aria-label="Capture for tomorrow" />
-          <Button variant="primary" disabled={busy || !text.trim()} onClick={submit}>Save</Button>
+            onChange={(e) => { setText(e.target.value); setLast(null); }} onKeyDown={(e) => { if (e.key === 'Enter') void submit(brain && (e.metaKey || e.ctrlKey)); }} aria-label="Capture for tomorrow" />
+          {brain && <Button disabled={busy || !text.trim()} onClick={() => void submit(true)} title="Keep it as a note instead of a task (⌘Return)">Save as Note</Button>}
+          <Button variant="primary" disabled={busy || !text.trim()} onClick={() => void submit()}>Save</Button>
         </div>
         {last && <p className="small muted" style={{ marginTop: 8 }}>{last}</p>}
       </Group>
