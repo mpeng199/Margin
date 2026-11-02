@@ -56,8 +56,8 @@ describe('google module (mock API)', () => {
     const g = app.ctx.service<GoogleService>('google');
     await g.sync();
     const set = app.ctx.changes.propose({ source: 'claude', title: 'x', changes: [
-      { kind: 'gcal.event.create', title: 'on primary', payload: { calendarId: 'michaelpeng199@gmail.com', title: 'Nope', start: '2026-10-26T19:00:00-04:00', end: '2026-10-26T20:00:00-04:00' } },
-      { kind: 'gcal.event.create', title: 'confirmed but no scope', payload: { calendarId: 'michaelpeng199@gmail.com', confirmed: true, title: 'Nope', start: '2026-10-26T19:00:00-04:00', end: '2026-10-26T20:00:00-04:00' } },
+      { kind: 'gcal.event.create', title: 'on primary', payload: { calendarId: 'me@example.com', title: 'Nope', start: '2026-10-26T19:00:00-04:00', end: '2026-10-26T20:00:00-04:00' } },
+      { kind: 'gcal.event.create', title: 'confirmed but no scope', payload: { calendarId: 'me@example.com', confirmed: true, title: 'Nope', start: '2026-10-26T19:00:00-04:00', end: '2026-10-26T20:00:00-04:00' } },
     ] });
     const out = await app.ctx.changes.apply(set.id);
     expect(out.changes[0].status).toBe('failed');

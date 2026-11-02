@@ -156,3 +156,18 @@ tooling; feature modules were built by parallel agents against written service/e
 - **Habit formation limit vs the Phase 1 set.** SPEC 8 caps formation at 2 but prescribes three Phase 1
   habits (fixed wake time, shutdown complete, phone out of the bedroom). The prescribed set is the one
   allowed exception; nothing new unlocks until those three hold 80%+ for two weeks.
+
+## Distribution and updates
+
+- **GitHub is the update channel.** The installed commit is recorded in `installed.json` (data dir) by
+  every install/update; the daemon fetches `origin/main` hourly and offers the difference. Comparing with
+  what was *built* (not the checkout's HEAD) means a folder that was pulled but never rebuilt still gets
+  the update. Updates are fast-forward only and refuse to run over uncommitted edits.
+- **The updater runs detached** in its own process group, so the daemon restart it triggers (launchd
+  `kickstart -k`) doesn't kill it. Progress is a small state file the restarted daemon reads to announce
+  "Margin updated" (or the failure). The window reloads itself when the daemon's version changes; the app
+  is relaunched only when the Electron shell itself changed.
+- **Margin.app installs to /Applications** when writable (so it's in Launchpad and Spotlight), otherwise
+  ~/Applications; only one copy is kept.
+- **The repo is public**, so the Apple HIG skill is a git submodule pointing at its original repository
+  instead of a vendored copy, and the mock data uses placeholder addresses.

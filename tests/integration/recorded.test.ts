@@ -61,7 +61,7 @@ describe('recorded Google Calendar responses', () => {
       }
       expect((init.headers as any).authorization).toBe('Bearer access-1');
       if (u.pathname.endsWith('/users/me/calendarList')) { round++; return json(fx('google-calendarlist.json')); }
-      if (u.pathname.includes('michaelpeng199%40gmail.com') || u.pathname.includes('michaelpeng199@gmail.com')) {
+      if (u.pathname.includes('me%40example.com') || u.pathname.includes('me@example.com')) {
         if (u.searchParams.get('syncToken')) {
           expect(u.searchParams.get('timeMin')).toBeNull(); // not allowed with syncToken
           return json(fx('google-events-incremental.json'));

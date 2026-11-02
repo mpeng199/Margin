@@ -4,6 +4,15 @@ Margin is a local, burnout-proof planner for macOS (see `docs/SPEC.md`, the sour
 `docs/DECISIONS.md` for every judgment call). One person uses it every day to run their evenings, so
 correctness, calm copy, and speed beat feature count.
 
+## Repository and shipping
+
+This folder is the clone of **github.com/mpeng199/Margin** and also the installed app (the launchd daemon
+runs from here; Margin.app is in /Applications). To ship a change: commit and `git push origin main`.
+Installed copies notice within an hour (`modules/update`) and offer **Update and Restart**, which runs
+`scripts/update.mjs`: fast-forward pull → `npm install` if dependencies changed → build → `scripts/install.mjs
+--relaunch`. Don't leave uncommitted edits to tracked files here: they block updates on purpose.
+`.claude/skills/apple-design` is a git submodule (`git submodule update --init`).
+
 ## Run, test, build
 
 ```bash
@@ -68,6 +77,7 @@ commands, settingsPanel, sidebar })` from `@web/lib/module`. Widget slots: `toda
 | `focus` | `timeLogs({projectId, from, to})`, `active()` |
 | `gethelp` | `open(reason)` |
 | `ai` | `enabled()`, `run(feature, input)`, `usage()` |
+| `update` | `status()`, `check()` (git fetch + compare with installed.json), `apply()` (detached updater), `dismiss()` |
 
 ### Events (persisted in `events`, forwarded to the UI over SSE)
 

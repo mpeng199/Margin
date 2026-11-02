@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { useLocation } from 'wouter';
-import { IconButton, Kbd } from '../ui';
+import { IconButton, Kbd, Icon } from '../ui';
 import { useApi } from '../lib/query';
 import { openPalette } from './palette-store';
 
@@ -10,6 +10,7 @@ export function Page({ title, actions, children, width = 'wide', subtitle }: { t
   const [, navigate] = useLocation();
   const pending = useApi<any[]>('/api/changesets?status=pending', { staleTime: 10_000 });
   const n = pending.data?.length ?? 0;
+  const update = useApi<{ available: boolean; phase: string }>('/api/update/status', { staleTime: 60_000 });
   return (
     <div className="main">
       <div className={`toolbar ${scrolled ? 'scrolled' : ''}`}>
@@ -17,6 +18,11 @@ export function Page({ title, actions, children, width = 'wide', subtitle }: { t
         {subtitle && <span className="muted small">{subtitle}</span>}
         <div className="actions">
           {actions}
+          {update.data?.available && (
+            <button className="btn" onClick={() => navigate('/settings/update')} title="A new version of Margin is ready">
+              <Icon name="ArrowDownToLine" size={14} /> Update
+            </button>
+          )}
           {n > 0 && (
             <button className="btn" onClick={() => navigate('/changes')} title="Changes waiting for your review">
               <span className="pill-count">{n}</span> To review

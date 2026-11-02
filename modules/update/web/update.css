@@ -1,0 +1,2 @@
+.upd-changes { margin: 6px 0 0; padding-left: 18px; color: var(--ink-2); font-size: var(--t-callout); }
+.upd-changes li + li { margin-top: 2px; }

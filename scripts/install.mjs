@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
+import { appDestination, dataDir } from './app-path.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const label = 'dev.minimike.margin';
@@ -29,7 +30,7 @@ const plist = `<?xml version="1.0" encoding="UTF-8"?>
   <key>ThrottleInterval</key><integer>10</integer>
   <key>ProcessType</key><string>Interactive</string>
   <key>EnvironmentVariables</key><dict>
-    <key>PATH</key><string>${esc(path.dirname(node))}:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    <key>PATH</key><string>${esc(path.dirname(node))}:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:/usr/local/bin</string>
   </dict>
   <key>StandardOutPath</key><string>${esc(logDir)}/daemon.log</string>
   <key>StandardErrorPath</key><string>${esc(logDir)}/daemon.log</string>
@@ -58,13 +59,28 @@ for (const f of fs.readdirSync(path.join(root, 'shell'), { recursive: true })) {
   if (fs.statSync(p).isFile()) hash.update(String(f)).update(fs.readFileSync(p));
 }
 const stamp = path.join(root, 'out', '.shell-hash');
-const app = path.join(os.homedir(), 'Applications', 'Margin.app');
+const app = appDestination();
 const digest = hash.digest('hex');
+const relaunch = process.argv.includes('--relaunch');
+let repackaged = false;
 if (!fs.existsSync(app) || !fs.existsSync(stamp) || fs.readFileSync(stamp, 'utf8') !== digest) {
   console.log('Packaging Margin.app…');
+  // A running copy has to quit before its bundle is replaced.
+  const wasRunning = spawnSync('pgrep', ['-f', 'Margin.app/Contents/MacOS/Margin'], { stdio: 'ignore' }).status === 0;
+  if (wasRunning) { spawnSync('osascript', ['-e', 'quit app "Margin"'], { stdio: 'ignore' }); spawnSync('sleep', ['2']); }
   execFileSync(process.execPath, [path.join(root, 'scripts/package-shell.mjs')], { stdio: 'inherit', cwd: root });
   fs.mkdirSync(path.dirname(stamp), { recursive: true });
   fs.writeFileSync(stamp, digest);
+  repackaged = true;
 }
-if (!process.argv.includes('--no-open')) spawnSync('open', [app]);
-console.log('Margin is open. It also starts at login.');
+
+// Record what is installed so the updater knows what “newer” means.
+try {
+  const sha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+  fs.mkdirSync(dataDir(), { recursive: true });
+  fs.writeFileSync(path.join(dataDir(), 'installed.json'), JSON.stringify({ sha, at: new Date().toISOString(), app }));
+} catch { /* not a git checkout */ }
+
+// --relaunch (updater): only reopen the app if its bundle changed; otherwise the open window reloads itself.
+if (relaunch ? repackaged : !process.argv.includes('--no-open')) spawnSync('open', [app]);
+console.log(`Margin is installed at ${app} and starts at login.`);

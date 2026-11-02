@@ -1,6 +1,6 @@
 {
   "_source": "events.list with singleEvents=true (documented event resource fields): a recurring instance across the DST change, an all-day event with exclusive end, a free (transparent) event, and an event Margin created.",
-  "kind": "calendar#events", "summary": "michaelpeng199@gmail.com", "timeZone": "America/New_York", "accessRole": "owner",
+  "kind": "calendar#events", "summary": "me@example.com", "timeZone": "America/New_York", "accessRole": "owner",
   "nextSyncToken": "CKCbq8e_x70CEKCbq8e_x70CGAU=",
   "items": [
     { "kind": "calendar#event", "id": "tlc942uc1k3k4p9rspgfi5hlqc_20261027T100000Z", "status": "confirmed", "summary": "Badminton",

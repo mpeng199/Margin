@@ -13,6 +13,7 @@ import { ZodError } from 'zod';
 import type { Ctx } from './types';
 import { ROOT } from './paths';
 import { now, setClock } from './time';
+import { runningVersion } from './version';
 
 type SSEClient = { kind: string; send: (event: string, data: unknown) => void };
 
@@ -54,7 +55,7 @@ export function createApp(ctx: Ctx, hub: Hub, port: number) {
   });
 
   // ---- core endpoints
-  app.get('/api/health', (c) => c.json({ ok: true, dev: ctx.dev, shell: hub.count('shell') }));
+  app.get('/api/health', (c) => c.json({ ok: true, dev: ctx.dev, shell: hub.count('shell'), version: runningVersion() }));
 
   app.get('/api/modules', (c) => c.json(ctx.registry.publicInfo(ctx.settings)));
   app.post('/api/modules/:id/enabled', async (c) => {
@@ -111,7 +112,7 @@ export function createApp(ctx: Ctx, hub: Hub, port: number) {
     return streamSSE(c, async (stream) => {
       const send = (event: string, data: unknown) => { void stream.writeSSE({ event, data: JSON.stringify(data) }); };
       const remove = hub.add({ kind, send });
-      send('hello', { kind });
+      send('hello', { kind, version: runningVersion() });
       const ping = setInterval(() => send('ping', {}), 20_000);
       await new Promise<void>((resolve) => stream.onAbort(() => resolve()));
       clearInterval(ping);

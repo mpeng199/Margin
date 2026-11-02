@@ -69,10 +69,10 @@ export function createMockGoogle(opts: { file?: string; now?: () => DateTime; se
   function strip(e: Ev): GEvent { const { _v, _master, ...rest } = e; return rest; }
 
   function seed() {
-    addCal({ id: 'michaelpeng199@gmail.com', summary: 'michaelpeng199@gmail.com', accessRole: 'owner', primary: true, selected: true, timeZone: ZONE, backgroundColor: '#039be5' });
+    addCal({ id: 'me@example.com', summary: 'me@example.com', accessRole: 'owner', primary: true, selected: true, timeZone: ZONE, backgroundColor: '#039be5' });
     addCal({ id: 'en.usa#holiday@group.v.calendar.google.com', summary: 'Holidays in United States', accessRole: 'reader', selected: true, timeZone: ZONE, backgroundColor: '#0b8043' });
     addCal({ id: 'hunter-feed@import.calendar.google.com', summary: 'Hunter College HS', accessRole: 'reader', selected: true, timeZone: ZONE, backgroundColor: '#8e24aa' });
-    const primary = 'michaelpeng199@gmail.com';
+    const primary = 'me@example.com';
     const recurring = (summary: string, byday: string, start: string, end: string, extra: Partial<GEvent> = {}) => {
       const first = now().startOf('week').minus({ weeks: 6 }).toISODate()!;
       const m: Ev = { id: rid(), summary, start: { dateTime: `${first}T${start}:00`, timeZone: ZONE }, end: { dateTime: `${first}T${end}:00`, timeZone: ZONE }, recurrence: [`RRULE:FREQ=WEEKLY;BYDAY=${byday}`], status: 'confirmed', _v: 0, ...extra };

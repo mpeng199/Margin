@@ -114,7 +114,9 @@ function buildMenu() {
   const go = (p) => () => showWindow(p);
   const template = [
     { label: 'Margin', submenu: [
-      { role: 'about' }, { type: 'separator' },
+      { role: 'about' },
+      { label: 'Check for Updates…', click: go('/settings/update') },
+      { type: 'separator' },
       { label: 'Settings…', accelerator: 'Cmd+,', click: go('/settings') },
       { type: 'separator' }, { role: 'hide' }, { role: 'hideOthers' }, { role: 'unhide' }, { type: 'separator' },
       { label: 'Quit Margin', accelerator: 'Cmd+Q', click: () => { quitting = true; app.quit(); } },
@@ -153,6 +155,7 @@ function buildTray() {
   tray.setToolTip('Margin');
   tray.setContextMenu(Menu.buildFromTemplate([
     { label: 'Open Margin', click: () => showWindow() },
+    { label: 'Check for Updates…', click: () => showWindow('/settings/update') },
     { label: `Quick Capture (${CAPTURE_SHORTCUT.replace('Control', '⌃').replace('Option', '⌥').replace('Space', 'Space').replace(/\+/g, '')})`, click: openCapture },
     { label: 'Get Help', click: () => showWindow('/help') },
     { type: 'separator' },

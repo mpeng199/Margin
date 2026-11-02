@@ -28,9 +28,16 @@ export function useAction<TBody = any, TOut = any>(method: 'post' | 'patch' | 'p
 /** Server-sent events: refetch when anything changes; the shell also uses this stream for notifications. */
 export function connectLiveUpdates() {
   let es: EventSource | null = null;
+  let version: string | null | undefined;
   let timer: number | undefined;
   const open = () => {
     es = new EventSource('/api/stream?client=web');
+    // After an update the daemon restarts on a new commit; reload so the UI matches it.
+    es.addEventListener('hello', (e) => {
+      const v = JSON.parse((e as MessageEvent).data).version ?? null;
+      if (version !== undefined && v && v !== version) location.reload();
+      version = v;
+    });
     es.addEventListener('bus', () => {
       clearTimeout(timer);
       timer = window.setTimeout(() => void queryClient.invalidateQueries(), 120);

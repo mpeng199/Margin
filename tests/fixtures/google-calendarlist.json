@@ -3,7 +3,7 @@
   "kind": "calendar#calendarList",
   "nextSyncToken": "CPDAlvWDx70CEPDAlvWDx70CGAU=",
   "items": [
-    { "kind": "calendar#calendarListEntry", "id": "michaelpeng199@gmail.com", "summary": "michaelpeng199@gmail.com", "timeZone": "America/New_York", "backgroundColor": "#039be5", "accessRole": "owner", "primary": true, "selected": true },
+    { "kind": "calendar#calendarListEntry", "id": "me@example.com", "summary": "me@example.com", "timeZone": "America/New_York", "backgroundColor": "#039be5", "accessRole": "owner", "primary": true, "selected": true },
     { "kind": "calendar#calendarListEntry", "id": "en.usa#holiday@group.v.calendar.google.com", "summary": "Holidays in United States", "timeZone": "America/New_York", "backgroundColor": "#0b8043", "accessRole": "reader", "selected": true }
   ]
 }
