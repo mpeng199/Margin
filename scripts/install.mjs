@@ -38,8 +38,13 @@ const plist = `<?xml version="1.0" encoding="UTF-8"?>
 `;
 const changed = !fs.existsSync(plistPath) || fs.readFileSync(plistPath, 'utf8') !== plist;
 fs.writeFileSync(plistPath, plist);
-if (changed) spawnSync('launchctl', ['bootout', `gui/${uid}/${label}`], { stdio: 'ignore' });
-const loaded = spawnSync('launchctl', ['print', `gui/${uid}/${label}`], { stdio: 'ignore' }).status === 0;
+const isLoaded = () => spawnSync('launchctl', ['print', `gui/${uid}/${label}`], { stdio: 'ignore' }).status === 0;
+if (changed && isLoaded()) {
+  // bootout returns before the job is gone; wait for it, or the bootstrap below races a dying job.
+  spawnSync('launchctl', ['bootout', `gui/${uid}/${label}`], { stdio: 'ignore' });
+  for (let i = 0; i < 40 && isLoaded(); i++) spawnSync('sleep', ['0.25']);
+}
+const loaded = isLoaded();
 if (!loaded) execFileSync('launchctl', ['bootstrap', `gui/${uid}`, plistPath]);
 else spawnSync('launchctl', ['kickstart', '-k', `gui/${uid}/${label}`], { stdio: 'ignore' });
 
