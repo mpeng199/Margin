@@ -49,6 +49,8 @@ function remarkBrain() {
 }
 
 const urlTransform = (url: string, key: string) => (key === 'href' && /^(wiki|tag):/.test(url) ? url : defaultUrlTransform(url));
+/** A hand-typed [x](wiki:%ZZ) must not crash the note. */
+const decode = (s: string) => { try { return decodeURIComponent(s); } catch { return s; } };
 
 /** Open a note by title; a link to a note that doesn't exist yet creates it (as in Obsidian). */
 export async function openTitle(title: string, navigate: (to: string) => void) {
@@ -66,7 +68,7 @@ export function Markdown({ text, known }: { text: string; known?: Set<string> })
   const components = useMemo(() => ({
     a: ({ href = '', children }: { href?: string; children?: React.ReactNode }) => {
       if (href.startsWith('wiki:')) {
-        const title = decodeURIComponent(href.slice(5));
+        const title = decode(href.slice(5));
         const missing = known && !known.has(titleKey(title));
         return (
           <a href={`/brain?open=${encodeURIComponent(title)}`} className={`brain-wikilink${missing ? ' missing' : ''}`} title={missing ? `Create “${title}”` : title}
@@ -74,7 +76,7 @@ export function Markdown({ text, known }: { text: string; known?: Set<string> })
         );
       }
       if (href.startsWith('tag:')) {
-        const tag = decodeURIComponent(href.slice(4));
+        const tag = decode(href.slice(4));
         return <a href={`/brain?tag=${encodeURIComponent(tag)}`} className="brain-tag" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setFilter({ tag, area: null, q: '', trash: false }); navigate('/brain'); }}>{children}</a>;
       }
       // Web links open in the browser; mailto goes through the shell's navigation guard to Mail.

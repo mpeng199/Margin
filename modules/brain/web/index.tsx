@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Component, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation, useSearch } from 'wouter';
 import { keepPreviousData } from '@tanstack/react-query';
 import { defineWebModule } from '@web/lib/module';
@@ -63,12 +63,24 @@ function BrainPage({ params }: { params?: { id?: string } }) {
       <div className="brain">
         <NoteList selected={id} onImport={() => setImporting(true)} />
         <div className="brain-pane">
-          {id ? <NoteView key={id} id={id} startEditing={search.get('edit') === '1'} /> : <Home />}
+          {id ? <Contained key={id}><NoteView id={id} startEditing={search.get('edit') === '1'} /></Contained> : <Home />}
         </div>
       </div>
       <ImportSheet open={importing} onClose={() => setImporting(false)} />
     </Page>
   );
+}
+
+/** Notes hold text from many places (imports, calendars, Claude); one that fails to render shouldn't blank the app. */
+class Contained extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(e: unknown) { console.error('brain: note failed to render', e); }
+  render() {
+    return this.state.failed
+      ? <div className="brain-home"><h2>This note couldn’t be shown</h2><p className="muted">Something in its text tripped the renderer. Your text is saved; open another note.</p></div>
+      : this.props.children;
+  }
 }
 
 // ------------------------------------------------------------------ list
