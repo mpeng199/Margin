@@ -9,7 +9,7 @@ const clock = (page: Page, iso: string) => page.request.post('/api/dev/clock', {
 const serverNow = async (page: Page) => Date.parse((await (await page.request.get('/api/dev/clock')).json()).now);
 const cont = (page: Page) => page.getByRole('button', { name: /^(Continue|Finish)$/ }).click();
 
-test('onboarding → daily loop → evening → morning → weekly review → project tab', async ({ page }) => {
+test('onboarding → daily loop → evening → morning → weekly review → project tab → second brain', async ({ page }) => {
   // ---------------- Onboarding (mock accounts)
   await page.goto('/');
   await expect(page).toHaveURL(/\/onboarding/);
@@ -124,4 +124,37 @@ test('onboarding → daily loop → evening → morning → weekly review → pr
   await expect(page).toHaveURL(/\/projects\//);
   await page.getByRole('button', { name: 'Timeline' }).click();
   await expect(page.getByText(/Today|today/).first()).toBeVisible();
+
+  // ---------------- Second brain: compiled from onboarding, then a note of your own with a link
+  await clock(page, '2026-11-02T10:00:00-05:00');
+  await page.request.post('/api/brain/compile', { headers: { 'x-margin': '1' } });
+  await page.goto('/brain');
+  const list = page.getByRole('complementary', { name: 'Notes' });
+  await expect(list.getByText('About me', { exact: true })).toBeVisible();
+  await expect(list.getByText('Delphic Medicine', { exact: true })).toBeVisible();
+  await expect(list.getByText('Maya', { exact: true })).toBeVisible(); // the owner named in onboarding
+  await page.getByRole('button', { name: 'New Note' }).first().click();
+  const title = page.getByRole('textbox', { name: 'Title', exact: true });
+  await title.fill('Poster plan');
+  await title.press('Enter');
+  const editor = page.getByLabel('Note text, in Markdown');
+  await editor.click();
+  await editor.pressSequentially('Ask [[May');
+  await expect(page.getByRole('option', { name: /Maya/ })).toBeVisible();
+  await editor.press('Enter');
+  await editor.pressSequentially(' about the poster. #lab');
+  await expect(editor).toHaveValue('Ask [[Maya]] about the poster. #lab');
+  await page.getByRole('button', { name: /^Done/ }).click();
+  await page.getByRole('article').getByRole('link', { name: 'Maya' }).click();
+  await expect(page.getByRole('heading', { name: 'Linked from' })).toBeVisible();
+  await expect(page.getByRole('article').getByText('Poster plan', { exact: true })).toBeVisible();
+  // ⌘K finds notes; ⌘N saves a thought as a note
+  await page.keyboard.press('ControlOrMeta+k');
+  await page.keyboard.type('poster plan');
+  await expect(page.getByRole('option', { name: /Poster plan/ })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('ControlOrMeta+n');
+  await page.getByPlaceholder(/Email Dr. Lim/).fill('Bring the poster tube');
+  await page.getByPlaceholder(/Email Dr. Lim/).press('ControlOrMeta+Enter');
+  await expect(page.getByText(/Saved “Bring the poster tube” to your Notes inbox/)).toBeVisible();
 });
