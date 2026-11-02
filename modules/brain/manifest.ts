@@ -13,9 +13,9 @@ import { compile } from './compile';
 import { cleanTitle } from './parse';
 
 const settings = z.object({
-  compile: z.boolean().default(true).describe('Keep notes compiled from the rest of Margin: your routine, recovery plan, projects, people, habits, rituals and a daily journal. What you write in those notes is never changed.'),
+  fromMargin: z.boolean().default(true).describe('Keep the “From Margin” part of notes current: your routine, recovery plan, projects, people, habits, rituals and a daily journal. What you write in those notes is never changed.'),
   journalDays: z.number().int().min(0).max(365).default(60).describe('How many days back the journal is compiled. 0 turns the journal off.'),
-  importFolder: z.string().max(1000).default('').describe('A folder of Markdown notes to import, such as an Obsidian vault. Import it from the Brain toolbar. Notes you edit in Margin are never overwritten by a later import.'),
+  importFolder: z.string().max(1000).default('').describe('A folder of Markdown notes to import, such as an Obsidian vault. Import it with the folder button under the note list in Brain. Notes you edit in Margin are never overwritten by a later import.'),
 });
 
 const b = (ctx: Ctx) => ctx.service<BrainService>('brain');
@@ -127,7 +127,7 @@ export default defineModule({
       return c.json({ date, notes: svc().forToday(date) });
     });
     r.post('/compile', (c) => c.json(compile(ctx, svc())));
-    r.get('/status', (c) => c.json({ compiledAt: svc().lastCompiledAt(), compile: svc().settings().compile, importFolder: svc().settings().importFolder }));
+    r.get('/status', (c) => c.json({ compiledAt: svc().lastCompiledAt(), fromMargin: svc().settings().fromMargin, importFolder: svc().settings().importFolder }));
     r.post('/import', async (c) => c.json(svc().importFolder(z.object({ folder: z.string().max(1000) }).parse(await c.req.json()).folder)));
 
     // For the MCP server: the same narrow view the in-app Claude tools get.

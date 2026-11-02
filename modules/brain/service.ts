@@ -15,9 +15,10 @@ import crypto from 'node:crypto';
 import type { Ctx } from '../../src/core/types';
 import { uid } from '../../src/core/db';
 import { now, at, fmtTime, fromISO, type ISODate } from '../../src/core/time';
+import { detectCrisis } from '../../src/integrations/claude';
 import { titleKey, cleanTitle, links, tags, renameLinks, snippet } from './parse';
 
-export interface BrainSettings { compile: boolean; journalDays: number; importFolder: string }
+export interface BrainSettings { fromMargin: boolean; journalDays: number; importFolder: string }
 
 export interface Row {
   id: string; title: string; title_key: string; area: string; body: string; auto: string; auto_wellbeing: string;
@@ -34,6 +35,8 @@ export interface Note extends NoteSummary {
   createdAt: string; compiledAt: string | null; deletedAt: string | null;
   backlinks: { id: string; title: string; area: string; snippet: string }[];
   links: { title: string; id: string | null }[];
+  /** The person's text reads like crisis language: the note shows 988 and Get help. Nothing is logged or sent. */
+  care: boolean;
 }
 /** What compile produces: one note per source, or one journal entry per date. */
 export interface GenNote { source: string; title: string; area: string; auto: string; wellbeing?: string; /** Only when first created. */ pinned?: boolean }
@@ -137,6 +140,7 @@ export function createBrainService(ctx: Ctx) {
     return {
       ...summary(r), body: r.body, auto: r.auto, wellbeing: r.auto_wellbeing, tags: tagsOf(r.id), source: r.source,
       createdAt: r.created_at, compiledAt: r.compiled_at, deletedAt: r.deleted_at, backlinks: backlinks(r), links: outgoing(r),
+      care: detectCrisis(r.body),
     };
   }
 

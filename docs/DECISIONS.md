@@ -212,6 +212,12 @@ tooling; feature modules were built by parallel agents against written service/e
   scale and avoids FTS5 shadow tables in the JSON export; switch to FTS5 past ~10k notes.
 - **Remote images in notes are shown as links, not loaded**, so opening a note never tells a server you
   read it; raw HTML in Markdown is dropped. The shell only hands http(s) and mailto links to macOS.
+- **The journal keeps the shutdown brain dump.** Shutdown now stores the night's open loops (text and next
+  action) in its summary, and that night's journal note lists them under Shutdown.
+- **Crisis language in a note gets a quiet line, not an alarm.** If your own text in a note reads like
+  crisis language (the same detector the in-app Claude uses), the note shows a dismissible line with 988
+  and a Get Help button. It doesn't open Get help on its own, log anything, or tell Claude: the journal
+  has to stay a place you can write honestly.
 - **Keyboard shortcuts come from each nav entry's `shortcut`**, matching the native Go menu (⌘1 Today …
   ⌘8 Ask, ⌘9 Brain). Before this the palette numbered entries by sidebar position, which disagreed with
   the menu from ⌘4 on.

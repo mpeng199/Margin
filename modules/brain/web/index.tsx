@@ -207,6 +207,7 @@ function NoteView({ id, startEditing }: { id: string; startEditing: boolean }) {
   const q = useApi<Note>(`/api/brain/notes/${id}`, { staleTime: 0, retry: false });
   const titles = useTitles();
   const [, navigate] = useLocation();
+  const [careHidden, setCareHidden] = useState(false);
   const n = q.data;
   // Until titles load, don't mark links as missing.
   const known = useMemo(() => (titles.data ? new Set(titles.data.map((t) => titleKey(t.title))) : undefined), [titles.data]);
@@ -235,6 +236,11 @@ function NoteView({ id, startEditing }: { id: string; startEditing: boolean }) {
   return (
     <article className="brain-note" aria-label={n.title}>
       {deleted && <Banner icon="Trash" action={<Button onClick={() => void restore()}>Restore</Button>}>This note is in Recently Deleted.</Banner>}
+      {n.care && !careHidden && (
+        <Banner icon="LifeBuoy" action={<Button onClick={() => navigate('/help')}>Get Help</Button>} onDismiss={() => setCareHidden(true)}>
+          If you’re thinking about hurting yourself, you don’t have to carry it alone. Call or text 988, any hour, and tell a trusted adult today.
+        </Banner>
+      )}
       <header className="brain-note-head">
         <TitleField note={n} />
         <div className="brain-meta">

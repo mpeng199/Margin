@@ -424,7 +424,8 @@ export function createFlow(ctx: Ctx, h: FlowHelpers) {
     const stop = day().anchors(date).effectiveStop;
     const minutesAfterStop = minutesBetween(stop, t);
     const risks = ev.deadlines.filter((r) => r.status === 'risk').map((r) => ({ key: r.key, title: r.title, date: r.date, reason: r.decision?.reason ?? '' }));
-    const summary = { created, moved, carried: p.carry.length, triaged: p.triage.length, mustDos: keep.size + p.items.filter((i) => i.mustDo).length, risks, changeSetId };
+    const loops = p.items.map((i) => ({ text: i.text, next: i.nextAction })); // the night's brain dump, for the journal
+    const summary = { created, moved, carried: p.carry.length, triaged: p.triage.length, mustDos: keep.size + p.items.filter((i) => i.mustDo).length, risks, changeSetId, loops };
     ctx.db.run(
       `INSERT INTO shutdowns (date, started_at, completed_at, minutes_after_stop, summary) VALUES (?, ?, ?, ?, ?)
        ON CONFLICT(date) DO UPDATE SET started_at = COALESCE(shutdowns.started_at, excluded.started_at), completed_at = excluded.completed_at,

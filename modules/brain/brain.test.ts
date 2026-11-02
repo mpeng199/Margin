@@ -113,6 +113,13 @@ describe('notes', () => {
     expect((await app.req('PATCH', `/api/brain/notes/${d1.id}`, { title: 'Renamed' })).status).toBe(409);
   });
 
+  it('flags crisis language in your own text, and only there', async () => {
+    const app = await testApp({ at: AT, only: ['brain'] });
+    const svc = brain(app);
+    expect(svc.create({ title: 'Tonight', body: 'I don’t want to be here anymore' }).care).toBe(true);
+    expect(svc.create({ title: 'Plan', body: 'Poster draft by Friday' }).care).toBe(false);
+  });
+
   it('refuses writes without the X-Margin header', async () => {
     const app = await testApp({ at: AT, only: ['brain'] });
     const r = await app.app.request('/api/brain/capture', { method: 'POST', headers: { host: '127.0.0.1:7317', 'content-type': 'application/json' }, body: JSON.stringify({ text: 'x' }) });
@@ -168,6 +175,13 @@ describe('compiled from Margin', () => {
     expect(svc.get(priya.id)).toMatchObject({ body: 'Prefers texts.', auto: '', generated: false });
   });
 
+  it('compiles nothing when From Margin is turned off', async () => {
+    const app = await testApp({ at: AT, only: ['brain', 'day'] });
+    app.ctx.settings.set('brain', { fromMargin: false });
+    expect(compile(app.ctx, brain(app))).toEqual({ created: 0, updated: 0, removed: 0 });
+    expect(brain(app).titles()).toEqual([]);
+  });
+
   it('adopts a hand-written note with the same name instead of duplicating it', async () => {
     const app = await testApp({ at: AT, only: ['brain', 'day'] });
     const svc = brain(app);
@@ -177,6 +191,21 @@ describe('compiled from Margin', () => {
     expect(r).toMatchObject({ body: 'Mine.', generated: true });
     expect(r.auto).toContain('Wake');
     expect(svc.titles().filter((t) => titleKey(t.title) === 'routine')).toHaveLength(1);
+  });
+
+  it('puts the shutdown brain dump into that night’s journal', async () => {
+    const app = await testApp({ at: '2026-10-30T21:05:00-04:00' });
+    await app.ctx.service<any>('todoist').sync();
+    const check = (await app.req('POST', '/api/shutdown/check', { items: [], phoneOut: true })).json;
+    const decisions = (check.deadlines ?? check.uncovered ?? []).map((d: any) => ({ key: d.key, status: 'risk', reason: 'Later' }));
+    const fin = await app.req('POST', '/api/shutdown/finish', {
+      items: [{ text: 'Ask Dr. Lim about the poster', nextAction: 'Email one question', when: 'tomorrow' }], carry: [], mustDos: [], decisions, phoneOut: true,
+    });
+    expect(fin.status).toBe(200);
+    compile(app.ctx, brain(app));
+    const night = brain(app).byTitle('2026-10-30')!;
+    expect(night.auto).toContain('## Shutdown');
+    expect(night.auto).toContain('- Ask Dr. Lim about the poster: Email one question');
   });
 
   it('keeps a journal across the Nov 1 fall-back, with wellbeing apart', async () => {

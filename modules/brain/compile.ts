@@ -275,6 +275,8 @@ function journal(ctx: Ctx, days: number): DayNote[] {
     const focusBy = new Map<string, number>();
     for (const l of logs.get(d) ?? []) focusBy.set(projectName(l.projectId), (focusBy.get(projectName(l.projectId)) ?? 0) + l.minutes);
     const br = breaks.get(d)?.length ?? 0;
+    let loops: { text: string; next?: string }[] = [];
+    try { if (n?.completedAt) loops = shutdown?.summary(d)?.loops ?? []; } catch { /* older shutdowns have no loops */ }
     out.push({
       date: d,
       auto: blocks(
@@ -285,7 +287,8 @@ function journal(ctx: Ctx, days: number): DayNote[] {
         sessions.has(d) && ['## Training', ...sessions.get(d)!.map((s) => `- ${cap(s.kind)}, ${s.minutes} min, effort ${s.rpe} of 10`)],
         (!!n?.completedAt || br > 0) && ['## Shutdown',
           ...(n?.completedAt ? [`Logged at ${fmtTime(fromISO(n.completedAt))}${n.minutesAfterStop > 0 ? `, ${fmtDuration(n.minutesAfterStop)} after the stop` : ''}.`] : []),
-          ...(br ? [`Stop broken ${br === 1 ? 'once' : `${br} times`}.`] : [])],
+          ...(br ? [`Stop broken ${br === 1 ? 'once' : `${br} times`}.`] : []),
+          ...(loops.length ? ['', 'Open loops written down:', ...loops.map((l) => `- ${l.text}${l.next ? `: ${l.next}` : ''}`)] : [])],
         written.has(d) && ['## Notes written', ...written.get(d)!.map((x) => `- ${link(x.title)}`)],
       ),
       wellbeing: c ? `Slept ${fmtDuration(c.sleepMin)}, bed ${fmtTime(fromISO(c.bedtime))}, up ${fmtTime(fromISO(c.wakeTime))}. Energy ${c.energy} of 10.${c.napMin ? ` Nap ${c.napMin} min.` : ''}` : '',
@@ -315,7 +318,7 @@ function about(ctx: Ctx, gens: Generated[]): Generated {
 
 export function compile(ctx: Ctx, svc: BrainService) {
   const st = svc.settings();
-  if (!st.compile) return { created: 0, updated: 0, removed: 0 };
+  if (!st.fromMargin) return { created: 0, updated: 0, removed: 0 };
   const gens: Generated[] = [];
   for (const g of [routine, recovery, habits, rituals, leisure, scripts, training, wellbeing, projects, todoistProjects, people, reviews]) {
     try { const out = g(ctx); if (out) gens.push(out); } catch (e: any) { ctx.log.warn(`brain: ${g.name} skipped`, e?.message); }
