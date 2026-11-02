@@ -404,12 +404,12 @@ export function createBrainService(ctx: Ctx) {
         if (x.projectId) add(db.get<Row>('SELECT * FROM brain_notes WHERE source = ?', `margin:project:${x.projectId}`), x.reason);
         else if (x.todoistProjectId) add(db.get<Row>('SELECT * FROM brain_notes WHERE source = ?', `margin:todoist:${x.todoistProjectId}`), x.reason);
       }
-      // ponytail: one regex per candidate title; fine for a few thousand notes.
+      // Substring first, then a word-boundary check: a regex per title cost seconds at a few thousand notes.
+      const hay = texts.map((x) => ({ ...x, lower: x.text.toLowerCase().replace(/\s+/g, ' ') }));
       const candidates = db.all<Row>(`SELECT id, title, title_key, area, deleted_at FROM brain_notes WHERE deleted_at IS NULL AND date IS NULL
         AND (source IS NULL OR substr(source, 1, 5) = 'file:' OR area IN ('People', 'Projects')) AND length(title) >= 3`);
       for (const c of candidates) {
-        const re = new RegExp(`(^|[^\\p{L}\\p{N}])${c.title_key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[^\\p{L}\\p{N}])`, 'iu');
-        const hit = texts.find((x) => re.test(x.text.toLowerCase()));
+        const hit = hay.find((x) => hasWord(x.lower, c.title_key));
         if (hit) add(c, hit.reason);
         if (out.size >= 8) break;
       }
@@ -510,6 +510,16 @@ export function createBrainService(ctx: Ctx) {
   return svc;
 }
 export type BrainService = ReturnType<typeof createBrainService>;
+
+const WORD = /[\p{L}\p{N}]/u;
+/** `needle` appears in `hay` as whole words (“Lim Lab” in “lim lab meeting”, not “Elect” in “election”). */
+export function hasWord(hay: string, needle: string): boolean {
+  for (let i = hay.indexOf(needle); i >= 0; i = hay.indexOf(needle, i + 1)) {
+    const before = hay[i - 1], after = hay[i + needle.length];
+    if (!(before && WORD.test(before)) && !(after && WORD.test(after))) return true;
+  }
+  return false;
+}
 
 /** Drop a leading YAML block (Obsidian frontmatter) and keep its tags as #tags. */
 export function fromMarkdownFile(text: string): string {

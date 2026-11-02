@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { testApp, flush } from '../../tests/helpers';
 import { titleKey, cleanTitle, links, tags, renameLinks } from './parse';
-import { fromMarkdownFile, type BrainService } from './service';
+import { fromMarkdownFile, hasWord, type BrainService } from './service';
 import { compile } from './compile';
 
 const AT = '2026-11-02T10:00:00-05:00'; // Monday after the fall-back
@@ -26,6 +26,13 @@ describe('links and tags', () => {
   it('rewrites links on rename, keeping headings and shown text', () => {
     expect(renameLinks('[[lim lab]] [[Lim Lab#Poster|poster]] [[Other]]', 'Lim Lab', 'Lim Lab (Mount Sinai)'))
       .toBe('[[Lim Lab (Mount Sinai)]] [[Lim Lab (Mount Sinai)#Poster|poster]] [[Other]]');
+  });
+
+  it('matches whole words only', () => {
+    expect(hasWord('lab meeting with dr. lim', 'dr. lim')).toBe(true);
+    expect(hasWord('election day', 'elect')).toBe(false);
+    expect(hasWord('pre-election, then elect officers', 'elect')).toBe(true);
+    expect(hasWord('lim lab', 'lim lab')).toBe(true);
   });
 
   it('keeps Obsidian frontmatter tags and drops the YAML block', () => {

@@ -289,7 +289,8 @@ function journal(ctx: Ctx, days: number): DayNote[] {
           ...(n?.completedAt ? [`Logged at ${fmtTime(fromISO(n.completedAt))}${n.minutesAfterStop > 0 ? `, ${fmtDuration(n.minutesAfterStop)} after the stop` : ''}.`] : []),
           ...(br ? [`Stop broken ${br === 1 ? 'once' : `${br} times`}.`] : []),
           ...(loops.length ? ['', 'Open loops written down:', ...loops.map((l) => `- ${l.text}${l.next ? `: ${l.next}` : ''}`)] : [])],
-        written.has(d) && ['## Notes written', ...written.get(d)!.map((x) => `- ${link(x.title)}`)],
+        written.has(d) && ['## Notes written', ...written.get(d)!.slice(0, 30).map((x) => `- ${link(x.title)}`),
+          ...(written.get(d)!.length > 30 ? [`- …and ${written.get(d)!.length - 30} more`] : [])],
       ),
       wellbeing: c ? `Slept ${fmtDuration(c.sleepMin)}, bed ${fmtTime(fromISO(c.bedtime))}, up ${fmtTime(fromISO(c.wakeTime))}. Energy ${c.energy} of 10.${c.napMin ? ` Nap ${c.napMin} min.` : ''}` : '',
     });
