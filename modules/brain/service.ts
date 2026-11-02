@@ -204,6 +204,11 @@ export function createBrainService(ctx: Ctx) {
 
     get(id: string): Note | null { const r = row(id); return r ? full(r) : null; },
     byTitle(title: string): Note | null { const r = byKey(titleKey(title)); return r ? full(r) : null; },
+    /** The live note compiled from a source, e.g. `margin:project:<id>`. */
+    bySource(source: string): Note | null {
+      const r = db.get<Row>('SELECT * FROM brain_notes WHERE source = ? AND deleted_at IS NULL', source);
+      return r ? full(r) : null;
+    },
 
     /** Every live title, for [[ autocomplete, link resolution and the palette. ponytail: whole list, page it past ~10k notes. */
     titles(): { id: string; title: string; area: string }[] {

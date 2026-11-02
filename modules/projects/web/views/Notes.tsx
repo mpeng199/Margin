@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useLocation } from 'wouter';
 import { api } from '@web/lib/api';
 import { useApi } from '@web/lib/query';
-import { Group, Section, Segmented, TextArea } from '@web/ui';
+import { useEnabled } from '@web/lib/hooks';
+import { Button, Group, Section, Segmented, TextArea } from '@web/ui';
 
 /** Markdown notes with autosave: the text is written 800 ms after you stop typing, and once more when you leave. */
 export function NotesView({ id }: { id: string }) {
   const q = useApi<{ notes: string }>(`/api/projects/${id}/notes`, { staleTime: 0, gcTime: 0 });
+  // The project's note in Brain carries these notes too, alongside its tasks, deadlines and people.
+  const brain = useApi<{ id: string | null }>(useEnabled('brain') ? `/api/brain/resolve?source=${encodeURIComponent(`margin:project:${id}`)}` : null);
+  const [, navigate] = useLocation();
   const [text, setText] = useState<string | null>(null);
   const [mode, setMode] = useState<'edit' | 'preview'>('edit');
   const [state, setState] = useState<'saved' | 'saving' | 'error'>('saved');
@@ -30,7 +35,7 @@ export function NotesView({ id }: { id: string }) {
   }, [text]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => { if (latest.current !== saved.current) void api.put(`/api/projects/${id}/notes`, { notes: latest.current }).catch(() => {}); }, [id]);
   return (
-    <Section title="Notes" end={<><span className="small muted" role="status">{state === 'saved' ? 'Saved' : state === 'saving' ? 'Saving' : 'Not saved. Retrying on your next edit.'}</span>
+    <Section title="Notes" end={<>{brain.data?.id && <Button variant="plain" icon="Brain" onClick={() => navigate(`/brain/${brain.data!.id}`)}>Open in Brain</Button>}<span className="small muted" role="status">{state === 'saved' ? 'Saved' : state === 'saving' ? 'Saving' : 'Not saved. Retrying on your next edit.'}</span>
       <Segmented label="Notes mode" value={mode} onChange={setMode} options={[{ value: 'edit', label: 'Edit' }, { value: 'preview', label: 'Preview' }]} /></>}>
       <Group pad>
         {text === null ? null : mode === 'edit'

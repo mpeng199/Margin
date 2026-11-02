@@ -116,7 +116,11 @@ export default defineModule({
     r.get('/titles', (c) => c.json(svc().titles()));
     r.get('/areas', (c) => c.json(svc().areas()));
     r.get('/tags', (c) => c.json(svc().tags()));
-    r.get('/resolve', (c) => { const n = svc().byTitle(c.req.query('title') ?? ''); return c.json({ id: n?.id ?? null }); });
+    r.get('/resolve', (c) => {
+      const source = c.req.query('source');
+      const n = source ? svc().bySource(source) : svc().byTitle(c.req.query('title') ?? '');
+      return c.json({ id: n?.id ?? null });
+    });
     r.post('/capture', async (c) => c.json(svc().capture(z.object({ text: z.string().max(BODY_MAX) }).parse(await c.req.json()).text)));
     r.post('/daily', async (c) => {
       const { date } = z.object({ date: iso.optional() }).parse(await c.req.json().catch(() => ({})));

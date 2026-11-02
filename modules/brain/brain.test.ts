@@ -157,6 +157,8 @@ describe('compiled from Margin', () => {
     expect(svc.byTitle('Priya')!.backlinks.map((b) => b.title)).toContain('Delphic Medicine');
     expect(svc.byTitle('Routine')!.auto).toContain('Hard stop');
 
+    expect((await app.req('GET', `/api/brain/resolve?source=margin:project:${p.id}`)).json).toEqual({ id: project.id });
+
     // What you write survives every compile; an unchanged world compiles to nothing.
     svc.update(project.id, { body: 'Hand this to the new editor by June.' });
     expect(compile(app.ctx, svc)).toEqual({ created: 0, updated: 0, removed: 0 });

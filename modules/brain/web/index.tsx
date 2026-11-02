@@ -8,7 +8,7 @@ import { api } from '@web/lib/api';
 import { useHotkey } from '@web/lib/hooks';
 import { DateTime } from 'luxon';
 import { dt, fmtDay, todayISO, serverNow } from '@web/lib/format';
-import { Section, Group, Item, Button, IconButton, Icon, Empty, Sheet, Input, Field, Banner, toast } from '@web/ui';
+import { Section, Group, Item, Button, IconButton, Icon, Sheet, Input, Field, Banner, toast } from '@web/ui';
 import { titleKey } from '../parse';
 import type { Note, NoteSummary } from '../service';
 import { Markdown, openTitle } from './Markdown';
@@ -48,11 +48,16 @@ function BrainPage({ params }: { params?: { id?: string } }) {
   const f = useFilter();
   const [importing, setImporting] = useState(false);
 
-  // Links like /brain?tag=x and /brain?open=Title (from the palette or a note) land here.
+  // Links like /brain?tag=x and /brain?open=Title land here. Loading a URL never writes: an unknown title becomes a search.
   useEffect(() => {
     const tag = search.get('tag'), open = search.get('open');
     if (tag) setFilter({ tag, area: null, q: '', trash: false });
-    if (open) void openTitle(open, (to) => navigate(to, { replace: true }));
+    if (open) {
+      void api.get<{ id: string | null }>(`/api/brain/resolve?title=${encodeURIComponent(open)}`).then(({ id }) => {
+        if (id) navigate(`/brain/${id}`, { replace: true });
+        else setFilter({ q: open, area: null, tag: null, trash: false });
+      }).catch(() => {});
+    }
   }, [search.get('tag'), search.get('open')]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
