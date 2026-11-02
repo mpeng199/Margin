@@ -36,7 +36,10 @@ export class Notifier {
 
   /** The day module installs the quiet-hours gate (no work notifications after shutdown / on the off-day). */
   setGate(fn: (c: NotificationCategory) => { allowed: boolean; reason?: string }) { this.gate = fn; }
-  setShellTransport(t: Transport | null) { this.shell = t; }
+  setShellTransport(t: Transport | null, connected?: () => boolean) { this.shell = t; this.shellConnected = connected ?? null; }
+  /** True when Margin.app is connected and will show notifications under its own name. */
+  hasShell() { return !!this.shellConnected?.(); }
+  private shellConnected: (() => boolean) | null = null;
 
   wasSent(key: string) {
     return !!this.db.get('SELECT 1 FROM notification_log WHERE key = ?', key);

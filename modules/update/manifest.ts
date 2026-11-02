@@ -167,13 +167,18 @@ export default defineModule({
     if ((st.phase === 'done' || st.phase === 'failed') && !st.reported) {
       const file = path.join(ctx.dataDir, 'update-state.json');
       fs.writeFileSync(file, JSON.stringify({ ...st, reported: true }));
-      if (st.phase === 'done') {
-        kvSet(ctx.db, 'update.status', { ...kvGet(ctx.db, 'update.status', {}), behind: 0, changes: [], latest: st.to ?? null });
-        ctx.notify.send({ key: `update.installed:${st.to}`, title: 'Margin updated', body: 'You’re on the latest version.', category: 'system', path: '/settings/update' });
-        ctx.bus.emit('update.installed', { to: st.to });
-      } else {
-        ctx.notify.send({ key: `update.failed:${st.at}`, title: 'Margin couldn’t update', body: st.error ?? 'See Settings → Updates.', category: 'system', path: '/settings/update' });
-      }
+      // The app window reconnects a few seconds after this restart; announce once it can show the banner as Margin.
+      const announce = (tries = 0) => {
+        if (tries < 10 && !ctx.notify.hasShell()) { setTimeout(() => announce(tries + 1), 1000).unref?.(); return; }
+        if (st.phase === 'done') {
+          ctx.notify.send({ key: `update.installed:${st.to}`, title: 'Margin updated', body: 'You’re on the latest version.', category: 'system', path: '/settings/update' });
+          ctx.bus.emit('update.installed', { to: st.to });
+        } else {
+          ctx.notify.send({ key: `update.failed:${st.at}`, title: 'Margin couldn’t update', body: st.error ?? 'See Settings → Updates.', category: 'system', path: '/settings/update' });
+        }
+      };
+      if (st.phase === 'done') kvSet(ctx.db, 'update.status', { ...kvGet(ctx.db, 'update.status', {}), behind: 0, changes: [], latest: st.to ?? null });
+      announce();
     }
   },
   jobs: [

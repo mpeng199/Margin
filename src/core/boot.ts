@@ -79,7 +79,7 @@ export async function boot(opts: BootOptions) {
 
   const hub = new Hub();
   bus.on('*', (p) => { hub.broadcast('bus', { name: p.$event }); });
-  notify.setShellTransport((n) => hub.broadcast('notify', n, 'shell') > 0);
+  notify.setShellTransport((n) => hub.broadcast('notify', n, 'shell') > 0, () => hub.count('shell') > 0);
   const app = createApp(ctx, hub, opts.port ?? PORT);
   const scheduler = new Scheduler(ctx);
   return { ctx, app, scheduler, hub };
