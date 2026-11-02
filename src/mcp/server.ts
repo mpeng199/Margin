@@ -12,7 +12,8 @@ import { makeCall, TOOLS, type Fetcher } from './tools';
 
 const INSTRUCTIONS =
   'Margin is a private planner for one high school student recovering from burnout. Read first (get_today, list_tasks, list_projects, get_metrics), ' +
-  'then use propose_changes. Nothing you propose is applied: the person reviews it in Margin → Review changes. ' +
+  'then use propose_changes. Their second brain (search_notes, read_note, list_notes) holds notes on people, projects, plans and ideas; save to it with propose_note. ' +
+  'Nothing you propose is applied: the person reviews it in Margin → Review changes. ' +
   'Never plan past the hard stop, never trade sleep for work, at most 3 must-dos per day. Be direct and specific; no cheerleading, no guilt.';
 
 export function daemonFetcher(port = process.env.MARGIN_PORT || 7317): Fetcher {

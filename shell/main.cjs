@@ -55,7 +55,8 @@ function createWindow() {
   win.once('ready-to-show', () => { if (!process.argv.includes('--hidden')) showWindow(); });
   win.on('close', (e) => { if (!quitting) { e.preventDefault(); win.hide(); app.dock?.hide(); } });
   win.webContents.setWindowOpenHandler(({ url }) => { if (/^https?:/.test(url)) shell.openExternal(url); return { action: 'deny' }; });
-  win.webContents.on('will-navigate', (e, url) => { if (!url.startsWith(ORIGIN)) { e.preventDefault(); shell.openExternal(url); } });
+  // Only web and mail links leave the app; anything else (file:, custom app schemes) is dropped.
+  win.webContents.on('will-navigate', (e, url) => { if (url !== ORIGIN && !url.startsWith(`${ORIGIN}/`)) { e.preventDefault(); if (/^(https?|mailto):/i.test(url)) shell.openExternal(url); } });
 }
 
 function showWindow(pathToOpen) {
@@ -136,6 +137,7 @@ function buildMenu() {
       { label: 'Training', accelerator: 'Cmd+6', click: go('/training') },
       { label: 'Insights', accelerator: 'Cmd+7', click: go('/insights') },
       { label: 'Ask Claude', accelerator: 'Cmd+8', click: go('/ask') },
+      { label: 'Brain', accelerator: 'Cmd+9', click: go('/brain') },
       { label: 'Get Help', click: go('/help') },
       { type: 'separator' },
       { label: 'Review Changes', click: go('/changes') },

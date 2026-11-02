@@ -29,7 +29,7 @@ describe('MCP server over the daemon API', () => {
     await app.ctx.service<any>('todoist').sync();
     const { client, call } = await connect(viaApp(app));
     const names = (await client.listTools()).tools.map((t) => t.name).sort();
-    expect(names).toEqual(['get_metrics', 'get_project', 'get_today', 'list_change_kinds', 'list_projects', 'list_tasks', 'propose_changes']);
+    expect(names).toEqual(['get_metrics', 'get_project', 'get_today', 'list_change_kinds', 'list_notes', 'list_projects', 'list_tasks', 'propose_changes', 'propose_note', 'read_note', 'search_notes']);
 
     const today = await call('get_today');
     expect(today.isError).toBe(false);
@@ -75,6 +75,28 @@ describe('MCP server over the daemon API', () => {
     expect(pending.json).toHaveLength(1);
     expect(pending.json[0]).toMatchObject({ source: 'mcp', title: 'Plan for Tue', status: 'pending' });
     expect(td.task(task.id).meta.mustDoDate ?? null).toBeNull();
+  });
+
+  it('reads the second brain without private notes and proposes notes for review', async () => {
+    const app = await testApp({ at: '2026-10-26T16:00:00-04:00' });
+    const brain = app.ctx.service<any>('brain');
+    brain.create({ title: 'Poster plan', body: 'Ask [[Dr. Lim]] about A0 #lab' });
+    brain.create({ title: 'Diary', body: 'Poster worries', private: true });
+    const { call } = await connect(viaApp(app));
+
+    expect((await call('search_notes', { query: 'poster' })).json().map((n: any) => n.title)).toEqual(['Poster plan']);
+    expect((await call('read_note', { title: 'poster plan' })).json()).toMatchObject({ title: 'Poster plan', tags: ['lab'], links: ['Dr. Lim'] });
+    const priv = await call('read_note', { title: 'Diary' });
+    expect(priv).toMatchObject({ isError: true });
+    expect(priv.text).toMatch(/private/);
+    expect((await call('list_notes', { tag: 'lab' })).json().map((n: any) => n.title)).toEqual(['Poster plan']);
+
+    const queued = await call('propose_note', { title: 'Dr. Lim', text: 'PI at the lab. Prefers email.', area: 'People' });
+    expect(queued.text).toMatch(/Nothing has been saved/);
+    expect(brain.byTitle('Dr. Lim')).toBeNull();
+    const set = (await app.req('GET', '/api/changesets?status=pending')).json[0];
+    expect(set).toMatchObject({ source: 'mcp', changes: [{ kind: 'brain.note.create', payload: { title: 'Dr. Lim', area: 'People' } }] });
+    expect((await call('propose_note', { title: 'Diary', text: 'x' })).isError).toBe(true);
   });
 
   it('sends x-margin on writes, so the daemon accepts them', async () => {

@@ -89,7 +89,7 @@ export default defineModule({
      CREATE INDEX reviews_done ON reviews(completed_at);`,
   ],
   service: createReviewService,
-  nav: [{ id: 'review', label: 'Review', icon: 'ClipboardCheck', path: '/review', section: 'main', order: 30, work: true }],
+  nav: [{ id: 'review', label: 'Review', icon: 'ClipboardCheck', path: '/review', section: 'main', order: 30, shortcut: 'Mod+4', work: true }],
   widgets: [{ id: 'due', slot: 'today.banner', order: 20 }],
   emits: ['review.completed'],
   init(ctx) {

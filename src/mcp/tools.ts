@@ -92,6 +92,35 @@ export const TOOLS: McpTool[] = [
     run: async (call, a) => out(await call('GET', `/api/ai/read/tasks${qs({ projectId: a.projectId, label: a.label, dueOn: a.dueOn, dueOnOrBefore: a.dueOnOrBefore })}`)),
   },
   {
+    name: 'search_notes',
+    description: 'Search the person’s second brain in Margin: their notes on people, projects, plans, ideas and reference, plus notes Margin compiles (routine, recovery plan, habits, projects, people). Returns titles with a snippet; read one with read_note. Private notes are never included, and the journal only when the person shares check-in data.',
+    input: { query: z.string().min(1).max(200), limit: z.number().int().min(1).max(25).optional() },
+    run: async (call, a) => out(await call('GET', `/api/brain/claude/search${qs({ q: a.query, limit: a.limit })}`)),
+  },
+  {
+    name: 'read_note',
+    description: 'Read one note from the second brain by title (from search_notes or list_notes): the person’s own text, the part Margin compiles (fromMargin), tags, links, and the notes that link to it.',
+    input: { title: z.string().min(1).max(200) },
+    run: async (call, a) => out(await call('GET', `/api/brain/claude/note${qs({ title: a.title })}`)),
+  },
+  {
+    name: 'list_notes',
+    description: 'List notes in the second brain, pinned and recently edited first. Optionally one area (Inbox, Me, Projects, People, Journal, or one the person made) or one tag.',
+    input: { area: z.string().max(60).optional(), tag: z.string().max(60).optional(), limit: z.number().int().min(1).max(200).optional() },
+    run: async (call, a) => out(await call('GET', `/api/brain/claude/notes${qs({ area: a.area, tag: a.tag, limit: a.limit })}`)),
+  },
+  {
+    name: 'propose_note',
+    description: 'Propose saving something to the person’s second brain: a new note, or text added to the end of the note with that title. Use [[Title]] to link notes and #tags. Nothing is saved until they apply it in Margin → Review changes.',
+    write: true,
+    input: { title: z.string().min(1).max(120), text: z.string().min(1).max(20000), area: z.string().max(40).optional().describe('For a new note: Inbox (default), Me, Projects, People, or another area') },
+    run: async (call, a) => {
+      const r = await call('POST', '/api/brain/claude/propose', { title: a.title, text: a.text, area: a.area });
+      if ('error' in r) return out(r);
+      return { text: `Queued “${r.data.title}”. Nothing has been saved. Tell the person to review it in Margin → Review changes (${r.data.url}).` };
+    },
+  },
+  {
     name: 'list_change_kinds',
     description: 'The kinds of change Margin can apply (for propose_changes), with the fields the person can edit before applying.',
     input: {},

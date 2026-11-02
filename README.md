@@ -92,9 +92,16 @@ propose changes, which land in the same review queue.
   lights-out countdown. Opening work views takes a deliberate "I'm breaking my stop".
 - **Projects** each have their own tab: overview, tasks, timeline, calendar, people, notes and log.
 - **Review** on Sunday afternoon (about 45 minutes) produces one set of changes to approve.
+- **Brain** is your second brain: Markdown notes with [[links]], #tags and backlinks in a few areas (Inbox,
+  Me, Projects, People, Journal, or your own). Margin compiles notes about your routine, recovery plan,
+  projects, people, habits and each day into it, and never touches what you write. **Today** opens the
+  journal note for the day. Import an Obsidian vault from the folder button under the note list. Claude
+  can search it (never private notes, the journal or sleep and mood unless you share them) and suggest
+  notes, which wait in Review changes.
 - **Get help** is always one click away (the life-buoy in the toolbar).
 
-Keyboard: ⌘K command palette · ⌘N quick capture · ⌃⌥Space capture from anywhere · ⌘1–6 sections · ⌘, Settings.
+Keyboard: ⌘K command palette (also finds notes) · ⌘N quick capture (⌘Return saves it as a note) · ⌃⌥Space
+capture from anywhere · ⌘1–9 sections (⌘9 Brain) · ⌘E edit a note · ⌥⌘F search notes · ⌘, Settings.
 
 ## Troubleshooting
 

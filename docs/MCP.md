@@ -44,14 +44,20 @@ Claude desktop sees, use its full path (`which node`).
 | `get_project` | One project: settings, tasks, deadlines, delegated functions, what it is waiting on. |
 | `get_metrics` | 1–12 weeks (default 4): stop breaks, completions, focus minutes per project, habit consistency, weekly scores. |
 | `list_tasks` | Todoist tasks (up to 150), filterable by project, label, due date. |
+| `search_notes` | Searches the second brain (titles, the person's text, compiled notes). Private notes are never included. |
+| `read_note` | One note by title: the person's text, the compiled part, tags, links and backlinks. |
+| `list_notes` | Notes by area or tag, pinned and recently edited first. |
+| `propose_note` | Queues a new note, or text appended to an existing one, for review. Nothing is saved until applied. |
 | `list_change_kinds` | The kinds of change `propose_changes` accepts. |
 | `propose_changes` | Queues a change set for your review (source "MCP"). Returns its id; nothing is applied. |
 
-These call `GET /api/ai/read/*` and `POST /api/ai/propose` on the daemon (writes carry the `X-Margin: 1` header).
+These call `GET /api/ai/read/*`, `GET /api/brain/claude/*`, `POST /api/ai/propose` and `POST /api/brain/claude/propose`
+on the daemon (writes carry the `X-Margin: 1` header).
 
 ## Privacy
 
-Sleep, energy, mood and dread are removed from everything the MCP server returns unless
+Notes marked private (the lock in Brain) are never returned. Journal notes and the wellbeing part of compiled
+notes are treated like check-in data. Sleep, energy, mood and dread are removed from everything the MCP server returns unless
 **Settings → Claude → Share check-in, sleep and mood with Claude** is on. That is the same switch the
 in-app Claude uses, and it is off by default. Anything the tools return goes to whichever Claude app you
 connected, and from there to Anthropic.

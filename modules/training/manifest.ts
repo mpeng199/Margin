@@ -204,7 +204,7 @@ export default defineModule({
       return c.json({ ok: true });
     });
   },
-  nav: [{ id: 'training', label: 'Training', icon: 'Dumbbell', path: '/training', section: 'main', order: 45, work: false }],
+  nav: [{ id: 'training', label: 'Training', icon: 'Dumbbell', path: '/training', section: 'main', order: 45, shortcut: 'Mod+6', work: false }],
   widgets: [{ id: 'today', slot: 'today.side', order: 40 }],
   claude: {
     context: (ctx) => {

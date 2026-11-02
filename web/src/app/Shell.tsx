@@ -33,8 +33,8 @@ export function Shell() {
     const h = (e: KeyboardEvent) => {
       if (isTyping(e) || !(e.metaKey || e.ctrlKey) || e.shiftKey || e.altKey) return;
       const n = Number(e.key);
-      if (n >= 1 && n <= 9) {
-        const entry = navMain[n - 1];
+      if (n >= 1 && n <= 9) { // the same shortcuts as the native Go menu
+        const entry = navMain.find((x) => x.shortcut === `Mod+${n}`);
         if (entry) { e.preventDefault(); navigate(entry.path); }
       }
     };

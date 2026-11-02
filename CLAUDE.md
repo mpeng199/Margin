@@ -78,6 +78,7 @@ commands, settingsPanel, sidebar })` from `@web/lib/module`. Widget slots: `toda
 | `gethelp` | `open(reason)` |
 | `ai` | `enabled()`, `run(feature, input)`, `usage()` |
 | `update` | `status()`, `check()` (git fetch + compare with installed.json), `apply()` (detached updater), `dismiss()` |
+| `brain` | `list(filter)`, `get(id)`, `byTitle(title)`, `create/update/append/remove/restore`, `capture(text)`, `daily(date)`, `search(q)`, `forToday(date)`, `claude.search/read/list` (privacy-filtered), `importFolder(dir)` |
 
 ### Events (persisted in `events`, forwarded to the UI over SSE)
 
@@ -85,7 +86,16 @@ commands, settingsPanel, sidebar })` from `@web/lib/module`. Widget slots: `toda
 `task.carried {taskId, count}`, `task.triaged`, `task.dropped`, `plan.accepted`, `shutdown.started`,
 `shutdown.completed {date, at}`, `checkin.submitted {date, sleepMin, energy}`, `review.completed`,
 `focus.completed {projectId, minutes}`, `habit.logged`, `project.status_changed`, `rule.fired`,
-`gethelp.opened`, `todoist.synced`, `google.synced`, `changeset.proposed`, `changeset.applied`.
+`gethelp.opened`, `todoist.synced`, `google.synced`, `changeset.proposed`, `changeset.applied`,
+`brain.note_created`, `brain.note_changed`, `brain.note_renamed`, `brain.note_deleted`, `brain.note_restored`,
+`brain.compiled`, `brain.imported` (body autosaves emit nothing).
+
+### Second brain (`modules/brain`)
+
+Notes have two texts: `body` (the person's) and `auto` + `auto_wellbeing` (compiled from other modules by
+`compile.ts`, read-only, never touches `body`). To surface a new module's data in the brain, add a generator to
+`compile.ts` that reads your service and returns `{ prefix, notes }`; put sleep/mood/ratings in `wellbeing`.
+[[links]] and #tags are parsed by `parse.ts` on both sides. Claude only reads through `svc.claude.*`.
 
 ## Conventions
 

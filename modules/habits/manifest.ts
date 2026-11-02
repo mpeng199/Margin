@@ -410,7 +410,7 @@ export default defineModule({
     r.post('/:id/graduate', (c) => c.json(svc().graduate(c.req.param('id'))));
     r.post('/:id/archive', (c) => { svc().archive(c.req.param('id')); return c.json({ ok: true }); });
   },
-  nav: [{ id: 'habits', label: 'Habits', icon: 'Repeat', path: '/habits', section: 'main', order: 40, work: false }],
+  nav: [{ id: 'habits', label: 'Habits', icon: 'Repeat', path: '/habits', section: 'main', order: 40, shortcut: 'Mod+5', work: false }],
   widgets: [{ id: 'today', slot: 'today.main', order: 60 }],
   rules: {
     conditions: [{

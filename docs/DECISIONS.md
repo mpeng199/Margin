@@ -171,3 +171,47 @@ tooling; feature modules were built by parallel agents against written service/e
   ~/Applications; only one copy is kept.
 - **The repo is public**, so the Apple HIG skill is a git submodule pointing at its original repository
   instead of a vendored copy, and the mock data uses placeholder addresses.
+
+## Second brain (Brain module, Nov 2 2026)
+
+- **Notes live in SQLite, not a folder of Markdown files.** Everything else in Margin is in the one
+  database, so the daily backup, JSON export, tests and the "never lose data" rules cover notes for free.
+  Obsidian vaults come in through **Import a Markdown Folder** (subfolders become areas, frontmatter tags
+  become #tags). Re-importing updates notes that are unchanged here and never overwrites ones edited in
+  Margin. The walk skips dot-folders, doesn't follow symlinks, and caps files (2,000) and size (1 MB).
+- **Lightweight on purpose: areas, [[links]], #tags, backlinks.** One area per note (Inbox, Me, Projects,
+  People, Journal, or any name typed in) instead of nested folders; tags for anything cross-cutting.
+  Titles are unique (case-insensitive), which keeps [[links]] unambiguous; renaming rewrites links to the
+  note in your text. No graph view and no plugins: the "Linked from" and "Not written yet" lists carry the
+  same information in less space.
+- **Compiled notes keep two texts.** A note's `body` is yours; its `auto` part ("From Margin") is rebuilt
+  from the rest of Margin every 15 minutes and a few seconds after relevant events, and is read-only.
+  Compiling never touches your text, so you can annotate a project or person note safely. Titles of
+  compiled notes follow their source (rename the project, the note follows). A compiled note you delete
+  stays deleted (a hidden tombstone remembers it); when a source disappears, a note you wrote in keeps your
+  text and loses the compiled part, and an untouched one goes away.
+- **What gets compiled:** About me (pinned front page), Routine (anchors, week, fixed blocks), Recovery
+  plan (phase rules, your rules with their whys), Habits, Rituals, Leisure list, Saying no, Training,
+  Sleep and energy, one note per Margin project and per Todoist list that isn't a project tab, one note per
+  person you delegate to or wait on, each weekly review, and a journal: one note per day that had something
+  in it (done tasks, focus, habits, training, shutdown, stop breaks, notes written), with that day's
+  schedule. Calendar events alone don't make a journal entry. Red-flag answers are never copied in.
+- **Wellbeing stays apart.** Sleep, energy, ratings, and the weekly summary (which quotes them) go in a
+  separate wellbeing text shown with a lock line. Claude never sees it, never sees private notes, and never
+  sees journal notes, unless "Share check-in, sleep and mood with Claude" is on, because the journal is
+  where mood gets written. Search for Claude only looks at title, your text and the compiled text.
+- **Claude reads and proposes; it never writes.** In-app tools and MCP get `search_notes`, `read_note`,
+  `list_notes` and `propose_note`. A proposal becomes a change set (`brain.note.create` or
+  `brain.note.append`) that waits in Review changes. Appending to a private or (unshared) journal note is
+  refused at proposal time.
+- **Body edits don't emit events.** Autosave runs 600 ms after typing stops; emitting on every save would
+  refetch every screen. Create, delete, restore, rename, pin, area and privacy changes do emit.
+- **Not a work view.** Brain stays open on the off-day; in Evening mode it is closed like everything else,
+  but ⌘N → Save as Note (⌘Return) still captures a thought into the Notes inbox.
+- **Search is a LIKE scan ranked in code** (title over text over compiled text). It's instant at personal
+  scale and avoids FTS5 shadow tables in the JSON export; switch to FTS5 past ~10k notes.
+- **Remote images in notes are shown as links, not loaded**, so opening a note never tells a server you
+  read it; raw HTML in Markdown is dropped. The shell only hands http(s) and mailto links to macOS.
+- **Keyboard shortcuts come from each nav entry's `shortcut`**, matching the native Go menu (⌘1 Today …
+  ⌘8 Ask, ⌘9 Brain). Before this the palette numbered entries by sidebar position, which disagreed with
+  the menu from ⌘4 on.

@@ -19,7 +19,7 @@ export default defineModule({
       return c.json(buildSummary(ctx, weeks.data));
     });
   },
-  nav: [{ id: 'insights', label: 'Insights', icon: 'ChartLine', path: '/insights', section: 'main', order: 50, work: false }],
+  nav: [{ id: 'insights', label: 'Insights', icon: 'ChartLine', path: '/insights', section: 'main', order: 50, shortcut: 'Mod+7', work: false }],
   claude: {
     tools: [{
       name: 'get_metrics',

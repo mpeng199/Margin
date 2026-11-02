@@ -157,7 +157,7 @@ export function createApp(ctx: Ctx, hub: Hub, port: number) {
   app.get('*', (c) => {
     const rel = decodeURIComponent(new URL(c.req.url).pathname).replace(/^\/+/, '');
     const file = path.join(dist, rel);
-    if (rel && file.startsWith(dist) && fs.existsSync(file) && fs.statSync(file).isFile()) {
+    if (rel && file.startsWith(dist + path.sep) && fs.existsSync(file) && fs.statSync(file).isFile()) {
       return new Response(fs.readFileSync(file), { headers: { 'content-type': mime(file), 'cache-control': rel.startsWith('assets/') ? 'public, max-age=31536000, immutable' : 'no-cache' } });
     }
     const index = path.join(dist, 'index.html');

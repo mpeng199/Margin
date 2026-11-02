@@ -37,7 +37,7 @@ export default defineModule({
   ],
   service: createAiService,
   emits: ['ai.key_changed'],
-  nav: [{ id: 'ask', label: 'Ask', icon: 'Sparkles', path: '/ask', section: 'main', order: 60, work: true }],
+  nav: [{ id: 'ask', label: 'Ask', icon: 'Sparkles', path: '/ask', section: 'main', order: 60, shortcut: 'Mod+8', work: true }],
   routes(r, ctx) {
     const ai = () => ctx.service<AiService>('ai');
 
