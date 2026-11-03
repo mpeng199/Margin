@@ -15,6 +15,11 @@ launchd agent is more reliable for background work than an app that can be quit.
 toolchain adds a long first build for no user-visible gain here. Why not a bare browser tab: the spec asks for
 an app window with a dock icon and a global shortcut.
 
+**The menu bar icon can be turned off** (Settings → Mac app → Menu Bar Icon), as the HIG suggests for menu
+bar extras. With it off, closing the window keeps Margin in the Dock instead of hiding it there too, so
+there's always a visible way back in; for the same reason the icon shows whenever the daemon can't be asked.
+The shell re-reads the setting on every `settings.changed` and every reconnect, so it applies at once.
+
 **SQLite via Node's built-in `node:sqlite`.** No native build step, no ABI drift, WAL mode, per-module
 append-only migrations tracked in `_migrations`.
 

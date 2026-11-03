@@ -45,7 +45,8 @@ scripts/           install.mjs (launchd + packaging), package-shell.mjs, make-ic
 Processes: the **daemon** owns all data, sync, rules and scheduling and serves the web app.
 **Margin.app** (Electron) is a thin window: vibrancy, menu bar, tray, global ⌃⌥Space capture, and
 Notification Center delivery (the daemon pushes notifications over SSE; with no shell connected it
-falls back to `osascript`).
+falls back to `osascript`). Shell preferences are the `app` module's settings (`menuBarIcon`); the shell
+re-reads them on every `settings.changed` and reconnect.
 
 ## Module contract (read `src/core/types.ts`)
 

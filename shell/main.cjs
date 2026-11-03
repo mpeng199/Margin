@@ -19,13 +19,22 @@ let quitting = false;
 if (!app.requestSingleInstanceLock()) { app.quit(); }
 app.setName('Margin');
 
-function health() {
+/** GET a daemon endpoint; null when it's down, slow, or answers with an error. */
+function getJson(p, timeout = 2000) {
   return new Promise((resolve) => {
-    const req = http.get(`${ORIGIN}/api/health`, { timeout: 800 }, (res) => { res.resume(); resolve(res.statusCode === 200); });
-    req.on('error', () => resolve(false));
-    req.on('timeout', () => { req.destroy(); resolve(false); });
+    const req = http.get(`${ORIGIN}${p}`, { timeout }, (res) => {
+      let body = '';
+      res.setEncoding('utf8');
+      res.on('data', (c) => { body += c; });
+      res.on('end', () => { try { resolve(res.statusCode === 200 ? JSON.parse(body) : null); } catch { resolve(null); } });
+      res.on('close', () => resolve(null));
+    });
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => { req.destroy(); resolve(null); });
   });
 }
+
+const health = async () => (await getJson('/api/health', 800))?.ok === true;
 
 async function ensureDaemon() {
   if (await health()) return true;
@@ -53,7 +62,8 @@ function createWindow() {
   });
   win.loadURL(`${ORIGIN}/`);
   win.once('ready-to-show', () => { if (!process.argv.includes('--hidden')) showWindow(); });
-  win.on('close', (e) => { if (!quitting) { e.preventDefault(); win.hide(); app.dock?.hide(); } });
+  // Without the menu bar icon, the Dock icon is the way back in, so it stays.
+  win.on('close', (e) => { if (!quitting) { e.preventDefault(); win.hide(); if (tray) app.dock?.hide(); } });
   win.webContents.setWindowOpenHandler(({ url }) => { if (/^https?:/.test(url)) shell.openExternal(url); return { action: 'deny' }; });
   // Only web and mail links leave the app; anything else (file:, custom app schemes) is dropped.
   win.webContents.on('will-navigate', (e, url) => { if (url !== ORIGIN && !url.startsWith(`${ORIGIN}/`)) { e.preventDefault(); if (/^(https?|mailto):/i.test(url)) shell.openExternal(url); } });
@@ -101,6 +111,8 @@ function listen() {
           note.on('click', () => showWindow(n.path));
           note.show();
         }
+        // Re-read on every connect too: the setting may have changed while the daemon restarted.
+        if (ev === 'hello' || (ev === 'bus' && data && JSON.parse(data).name === 'settings.changed')) void syncTray();
       }
     });
     res.on('end', () => retry(2000));
@@ -165,6 +177,20 @@ function buildTray() {
   ]));
 }
 
+/** The menu bar icon follows Settings → Mac app → Menu Bar Icon; it's shown when the daemon can't be asked. */
+let traySeq = 0;
+async function syncTray() {
+  const n = ++traySeq;
+  const show = (await getJson('/api/settings/app'))?.menuBarIcon !== false;
+  if (n !== traySeq) return; // a newer read is in flight
+  if (show && !tray) buildTray();
+  if (!show && tray) {
+    tray.destroy();
+    tray = null;
+    if (app.dock && !app.dock.isVisible()) app.dock.show(); // never leave Margin with no way back in
+  }
+}
+
 ipcMain.on('margin:accent', (e) => { e.returnValue = accentHex(); });
 ipcMain.on('margin:close-capture', () => capture && !capture.isDestroyed() && capture.close());
 ipcMain.on('margin:open-external', (_e, url) => { if (/^https?:/.test(url)) shell.openExternal(url); });
@@ -177,11 +203,11 @@ app.on('will-quit', () => globalShortcut.unregisterAll());
 app.whenReady().then(async () => {
   if (app.isPackaged) app.setLoginItemSettings({ openAtLogin: true, openAsHidden: true, args: ['--hidden'] });
   buildMenu();
-  buildTray();
   const ok = await ensureDaemon();
   if (!ok) {
     new Notification({ title: 'Margin couldn’t start its background service', body: 'Run ./start.sh in the Margin folder.' }).show();
   }
+  void syncTray();
   createWindow();
   listen();
   if (!globalShortcut.register(CAPTURE_SHORTCUT, openCapture)) console.warn('Capture shortcut is taken:', CAPTURE_SHORTCUT);
